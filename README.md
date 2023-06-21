@@ -5,7 +5,7 @@ This is a demo of the shift invariant k-means algorithm. Currently this is run o
 By default, the morlet data and results from running sikmeans on it are included in the repo.
 
 If you'd like to run this on data of your own, create a subdirectory with the experiment name you'd like in both the data and results directories.
-Then, navigate to the scripts subdirectory in your terminal and run the following command:
+The data needs to be in .npz format. Then, navigate to the scripts subdirectory in your terminal and run the following command:
 
 python run_sikmeans.py EXPERIMENT_NAME --root='root/directory'
 

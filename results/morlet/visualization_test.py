@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+#Test file getting the matplotlib turning out well. please ignore for demo purposes
 
 out_file = 'sikmeans_k-128_P-512_wlen-768.npz'
 
