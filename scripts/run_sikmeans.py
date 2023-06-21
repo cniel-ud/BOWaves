@@ -7,6 +7,7 @@ import numpy as np
 
 import os
 import sys
+import matplotlib.pyplot as plt
 
 currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -26,6 +27,9 @@ parser.add_argument("--window-len", type=int, default=768,
                     help="Length of non-overlapping window length")
 parser.add_argument('--num-clusters', type=int,
                     default=128, help='Number of clusters')
+parser.add_argument('--visualize', default=True, help="Print out codebooks")
+parser.add_argument('--visualize_cutoff', type=int, default=5,
+                    help="Only centroids with this many occurrences or above are visualized. Set to zero to visualize all")
 
 args = parser.parse_args()
 win_len = args.window_len
@@ -68,3 +72,60 @@ with out_file.open('wb') as f:
 
 t_stop = perf_counter()
 print(f'Finished after {t_stop-t_start} seconds!')
+
+if args.visualize:
+    with np.load(out_file) as data:
+        centroids = data['centroids']
+        labels = data['labels']
+        shifts = data['shifts']
+        distances = data['distances']
+
+    unique_labels, cluster_size = np.unique(labels, return_counts=True)
+
+    # Sort centroids in descending order of cluster size
+    isort = np.argsort(-cluster_size)
+    centroids = centroids[isort]
+    unique_labels = unique_labels[isort]
+    cluster_size = cluster_size[isort]
+    # Determine the grid dimensions based on the number of centroids
+
+    # determine number of centroids over some cluster size cutoff
+    #args.visualize_cutoff = 5
+    number = 0
+    for i in cluster_size:
+        if i >= args.visualize_cutoff:
+            number += 1
+
+    num_centroids = len(centroids)
+    num_rows = int(np.ceil(np.sqrt(number)))
+    num_cols = int(np.ceil(number / num_rows))
+
+    # Create subplots with the determined grid dimensions
+    fig, axs = plt.subplots(num_rows, num_cols, figsize=(12, 8))
+
+    # Flatten the axs array if necessary
+    if num_centroids == 1:
+        axs = np.array([axs])
+
+    # Iterate over the centroids and plot each as a waveform in a separate subplot
+    for i, centroid in enumerate(centroids):
+        if cluster_size[i] >= 5:
+            # Determine the subplot indices
+            row_idx = i // num_cols
+            col_idx = i % num_cols
+
+            # Plot the waveform in the corresponding subplot
+            axs[row_idx, col_idx].plot(centroid)
+            # axs[row_idx, col_idx].set_title(f"Centroid {i + 1}")
+            axs[row_idx, col_idx].set_title(cluster_size[i])
+
+    # Remove empty subplots if the number of centroids is not a perfect square
+    if num_centroids % num_cols != 0:
+        for i in range(num_centroids, num_rows * num_cols):
+            axs.flatten()[i].axis('off')
+
+    # Adjust the spacing between subplots
+    plt.tight_layout()
+
+    # Display the plot
+    plt.show()
