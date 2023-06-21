@@ -4,7 +4,15 @@ from time import perf_counter
 os.unsetenv('OMP_THREAD_LIMIT')
 from pathlib import Path
 import numpy as np
-from qsmp.shift_kmeans.shift_kmeans import shift_invariant_k_means
+
+import os
+import sys
+
+currentdir = os.path.dirname(os.path.abspath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+
+from sikmeans import shift_invariant_k_means
 
 t_start = perf_counter()
 

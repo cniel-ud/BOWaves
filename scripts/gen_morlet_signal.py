@@ -2,8 +2,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from spectrum import MultiTapering
-from qsmp.datasets import morlet_signal
+from utilities.datasets import morlet_signal
 from pathlib import Path
+from utilities.utils import get_project_root
 
 #%% Generate signal from Morlet wavelets
 sig_params = dict(
@@ -19,9 +20,12 @@ plt.plot(sig[13*sig_params['wave_len']:20*sig_params['wave_len']])
 sig_params['SNRdB'] = SNRdB
 sig_params['freq'] = freq
 
+root_dir = get_project_root()
+morlet_dir = Path(root_dir + '/data/morlet')
+
 #%% Save data
-root = '/home/cmendoza/software/qsmp/data/morlet'
-fpath = Path(root).joinpath('morlet_signal.npz')
+#root = '/home/cmendoza/software/qsmp/data/morlet'
+fpath = Path(morlet_dir).joinpath('morlet_signal.npz')
 with fpath.open('wb') as f:
     np.savez(
         f, T=sig, splice=np.full(0,0), **sig_params

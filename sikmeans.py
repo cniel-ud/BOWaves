@@ -9,8 +9,8 @@ import scipy.sparse as sp
 from sklearn.utils.extmath import stable_cumsum, squared_norm, row_norms
 from sklearn.exceptions import ConvergenceWarning
 
-import qsmp.shift_kmeans.utils as utils
-import qsmp.shift_kmeans.wrappers as wrappers
+import utils
+import wrappers
 
 ###############################################################################
 # Initialization
