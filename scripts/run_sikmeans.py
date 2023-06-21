@@ -35,9 +35,12 @@ args = parser.parse_args()
 win_len = args.window_len
 root = Path(args.root)
 data_dir = root.joinpath('data', args.experiment)
-results_dir = root.joinpath('results', args.experiment)
 data_dir.mkdir(exist_ok=True)
+
+
+results_dir = root.joinpath('results', args.experiment)
 results_dir.mkdir(exist_ok=True)
+
 
 fpath = list(data_dir.glob('*.npz'))[0]
 with np.load(fpath, allow_pickle=True) as data:
@@ -65,16 +68,19 @@ centroids, labels, shifts, distances, _, _ = shift_invariant_k_means(
 
 
 out_file = f'sikmeans_k-{k}_P-{P}_wlen-{win_len}.npz'
-out_file = results_dir.joinpath(out_file)
-with out_file.open('wb') as f:
+out_file_full = results_dir.joinpath(out_file)
+with out_file_full.open('wb') as f:
     np.savez(f, centroids=centroids, labels=labels,
              shifts=shifts, distances=distances)
 
 t_stop = perf_counter()
 print(f'Finished after {t_stop-t_start} seconds!')
 
+#out_file = f'sikmeans_k-128_P-512_wlen-768.npz'
+#out_file_full = results_dir.joinpath(out_file)
+
 if args.visualize:
-    with np.load(out_file) as data:
+    with np.load(out_file_full) as data:
         centroids = data['centroids']
         labels = data['labels']
         shifts = data['shifts']
@@ -127,5 +133,11 @@ if args.visualize:
     # Adjust the spacing between subplots
     plt.tight_layout()
 
-    # Display the plot
-    plt.show()
+    # Save the plot to images subdirectory
+    img_dir = root.joinpath('img')#, args.experiment)
+    img_dir.mkdir(exist_ok=True)
+    img_dir_exp = img_dir.joinpath(args.experiment)
+    img_dir_exp.mkdir(exist_ok=True)
+
+    img_file = str(out_file).replace('.npz', '_img')
+    plt.savefig(str(img_dir_exp) + '/' + img_file)

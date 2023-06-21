@@ -64,7 +64,6 @@ number = 0
 for i in cluster_size:
     if i >= 5:
         number += 1
-
 num_centroids = len(centroids)
 num_rows = int(np.ceil(np.sqrt(number)))
 num_cols = int(np.ceil(number / num_rows))
