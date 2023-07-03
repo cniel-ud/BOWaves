@@ -28,7 +28,7 @@ def init_centroids(X, n_clusters, centroid_length, metric='euclidean',\
     n_clusters (int):
         Number of initial seed centroids
     centroid_length (int):
-        Lenght of each centroid
+        Length of each centroid
     init ('k-means++', 'random', numpy.ndarray, or a function):
         Method for initialization. If it's a function, it should have this
         call signature:
@@ -389,13 +389,20 @@ def si_kmeans_single(X, n_clusters, centroid_length, metric='euclidean',\
     centroids = init_centroids(
         X, n_clusters, centroid_length, metric, init, x_squared_norms, rng)
 
+    #The below is Dr. B's additions from the Jupyter notebook.
+    #I've added the update step function to the utils file.
+    #Adding here to test before PR
+    labels, shifts, distances = _assignment_step(
+        X, centroids, metric, x_squared_norms)
+    centroids = utils._init_centroids_update_step(
+        X, centroid_length, n_clusters, labels, shifts) # NEW
+
     if verbose:
         print('Initialization completed.')
 
     for iteration in range(max_iter):
         centroids_old = centroids.copy()
-        labels, shifts, distances = _asignment_step(
-            X, centroids, metric, x_squared_norms)
+        labels, shifts, distances = _assignment_step(X, centroids, metric, x_squared_norms)
         centroids = _centroids_update_step(
             X, centroid_length, n_clusters, labels, shifts)
 
@@ -422,14 +429,13 @@ def si_kmeans_single(X, n_clusters, centroid_length, metric='euclidean',\
     if centroid_change > 0:
         # rerun asingment step in case of non-convergence so that predicted
         # labels match cluster centers
-        best_labels, best_shifts, distances = _asignment_step(
-            X, best_centroids, metric, x_squared_norms)
+        best_labels, best_shifts, distances = _assignment_step(X, best_centroids, metric, x_squared_norms)
         best_inertia = distances.sum()
 
     return best_centroids, best_labels, best_shifts, best_distances, best_inertia, iteration+1
 
 
-def _asignment_step(X, centroids, metric, x_squared_norms):
+def _assignment_step(X, centroids, metric, x_squared_norms):
     """
     Find the index of the shifted centroid that is closest to each sample
 
@@ -440,8 +446,8 @@ def _asignment_step(X, centroids, metric, x_squared_norms):
     centroids (numpy.ndarray):
         Centroids of the clusters.
     x_squared_norms (numpy.ndarray):
-        Squared euclidean norm of rows of X. This is used to speed up the
-        computation of the euclidean distances between samples and centroids.
+        Squared Euclidean norm of rows of X. This is used to speed up the
+        computation of the Euclidean distances between samples and centroids.
 
     Returns
     -------

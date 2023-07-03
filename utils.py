@@ -170,3 +170,37 @@ def pick_windows(array, window_length, offset='all'):
     col_id = col_id + offset
 
     return array[row_id, col_id]
+
+def _init_centroids_update_step(X, centroid_length, n_clusters, labels, shifts):
+    """
+    Update the cluster centroids
+    """
+
+    cluster_ids, _ = np.unique(labels, return_counts=True)
+    centroids = np.zeros((n_clusters, centroid_length))
+    n_samples, sample_length = X.shape
+    # adjust the shifts such that after adjustment the median shift is
+    max_shift = sample_length - centroid_length
+    opt_shift = max_shift/2
+    adjusts = np.zeros((n_clusters))
+    for k in cluster_ids:
+        shifts_k = shifts[labels==k]
+        adjusts[k] = opt_shift-np.median(shifts_k)
+
+    cluster_sizes = np.zeros((n_clusters,1))
+    for sample_id, sample in enumerate(X):
+        cluster_id = labels[sample_id]
+        temp = shifts[sample_id]+adjusts[cluster_id]
+        if temp >= 0 and temp <= max_shift:
+            shift = np.floor(temp).astype(int)
+            centroids[cluster_id] += sample[shift:shift+centroid_length]
+            cluster_sizes[cluster_id] += 1
+
+    # NOTE: Some clusters might be empty drop them
+    #centroids/= cluster_sizes
+    for k in np.where(cluster_sizes==0)[0]:
+        centroids[k,:] = 0
+    for k in np.nonzero(cluster_sizes)[0]:
+        centroids[k,:]/= cluster_sizes[k]
+
+    return centroids
