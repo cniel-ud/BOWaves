@@ -9,8 +9,8 @@ import scipy.sparse as sp
 from sklearn.utils.extmath import stable_cumsum, squared_norm, row_norms
 from sklearn.exceptions import ConvergenceWarning
 
-import utils
-import wrappers
+from utilities import sikmeans_utils, wrappers
+
 
 ###############################################################################
 # Initialization
@@ -56,7 +56,7 @@ def init_centroids(X, n_clusters, centroid_length, metric='euclidean',\
         The centroid seeds
     """
 
-    rng = utils.check_rng(rng)
+    rng = sikmeans_utils.check_rng(rng)
 
     n_samples, sample_length = X.shape
 
@@ -146,11 +146,11 @@ def _kmeans_plus_plus(X, n_clusters, centroid_length, x_squared_norms,\
     # randomly selected.
     sample_id = rng.integers(n_samples)
     if sp.issparse(X):
-        all_windows = utils.pick_random_windows(X[sample_id].toarray(),
+        all_windows = sikmeans_utils.pick_random_windows(X[sample_id].toarray(),
                                                 n_windows, centroid_length,
                                                 rng)
     else:
-        all_windows = utils.pick_random_windows(X[sample_id], n_windows,
+        all_windows = sikmeans_utils.pick_random_windows(X[sample_id], n_windows,
                                                 centroid_length, rng)
     all_windows = all_windows.squeeze(axis=0)
 
@@ -190,11 +190,11 @@ def _kmeans_plus_plus(X, n_clusters, centroid_length, x_squared_norms,\
         # Pick all windows from each candidate sample.
         # all_windows.shape=(n_local_trials,n_windows,centroid_length)
         if sp.issparse(X):
-            all_windows = utils.pick_random_windows(
+            all_windows = sikmeans_utils.pick_random_windows(
                 X[candidate_ids].toarray(), n_windows, centroid_length,
                 rng)
         else:
-            all_windows = utils.pick_random_windows(
+            all_windows = sikmeans_utils.pick_random_windows(
                 X[candidate_ids], n_windows, centroid_length, rng)
 
         # Compute distances to centroid candidates for all windows
@@ -236,7 +236,7 @@ def _random_init(X, n_clusters, centroid_length, rng):
     n_samples = X.shape[0]
     seeds = rng.permutation(n_samples)[:n_clusters]
     centroids = X[seeds]
-    centroids = utils.pick_random_windows(centroids, 1, centroid_length,
+    centroids = sikmeans_utils.pick_random_windows(centroids, 1, centroid_length,
                                           rng).squeeze()
 
     return centroids
@@ -248,7 +248,7 @@ def _random_energy_init(X, n_clusters, centroid_length, rng):
     windows = X[seeds]
     # Pick all windows
     # (n_rows, n_offsets, window_length)
-    windows = utils.pick_windows(windows, centroid_length, offset='all')
+    windows = sikmeans_utils.pick_windows(windows, centroid_length, offset='all')
     shifts = np.empty(n_clusters, dtype=np.int64)
     for i_centroid in range(n_clusters):
         energy = row_norms(windows[i_centroid], squared=False)
@@ -321,7 +321,7 @@ def shift_invariant_k_means(X, n_clusters, centroid_length, metric='euclidean',\
         Number of iterations needed to achieve convergence, according to `tol`.
     """
 
-    rng = utils.check_rng(rng)
+    rng = sikmeans_utils.check_rng(rng)
 
     best_labels, best_shifts, best_centroids = None, None, None
     best_distances, best_inertia, best_n_iter = None, None, None
@@ -375,7 +375,7 @@ def si_kmeans_single(X, n_clusters, centroid_length, metric='euclidean',\
     Single run of shift-invariant k-means
     """
 
-    rng = utils.check_rng(rng)
+    rng = sikmeans_utils.check_rng(rng)
 
     if isinstance(metric, str) and metric == 'euclidean':
         if x_squared_norms is None:
