@@ -57,6 +57,15 @@ def si_euclidean_distances(centroids, X, X_norm_squared,
 def si_pairwise_distances_argmin_min(X, centroids, metric, x_squared_norms):
     """
     Shift-invariant wrapper of http://bit.ly/argmin_min_sklearn
+
+    Parameters:
+    X (numpy.ndarray):
+        Training data. Rows of X are samples.
+    centroids (numpy.ndarray):
+        Centroids of the clusters.
+    x_squared_norms (numpy.ndarray):
+        Squared Euclidean norm of rows of X. This is used to speed up the
+        computation of the Euclidean distances between samples and centroids.
     """
 
    # euclidean_distances() requires 2D
@@ -114,3 +123,60 @@ def si_row_norms(X, centroid_length, squared=False):
             X[:, shift:shift+centroid_length], squared=squared)
 
     return x_squared_norms
+
+
+def si_pairwise_distances_argmin_min_toeplitz(X, centroids, metric, x_squared_norms):
+    """
+    Shift-invariant wrapper of http://bit.ly/argmin_min_sklearn
+
+    Use toeplitz matrix
+
+    Parameters:
+    X (numpy.ndarray):
+        Training data. Rows of X are samples.
+    centroids (numpy.ndarray):
+        Centroids of the clusters.
+    x_squared_norms (numpy.ndarray):
+        Squared Euclidean norm of rows of X. This is used to speed up the
+        computation of the Euclidean distances between samples and centroids.
+    """
+
+    # euclidean_distances() requires 2D
+    if metric == 'euclidean' and x_squared_norms.ndim == 1:
+        x_squared_norms = x_squared_norms.reshape(1, -1)
+    if centroids.ndim == 1:
+        centroids = centroids.reshape(1, -1)
+
+    n_samples, sample_length = X.shape
+    centroid_length = centroids.shape[1]
+    n_shifts = sample_length - centroid_length + 1
+
+    best_labels = np.empty((n_shifts, n_samples), dtype=int)
+    best_distances = np.empty((n_shifts, n_samples))
+
+    if metric == 'euclidean':
+        for shift in range(n_shifts):
+            # A bug on sklearn enforces a 2D array
+            XX = x_squared_norms[shift].reshape((n_samples, 1))
+            best_labels[shift], best_distances[shift] = \
+                pairwise_distances_argmin_min(
+                    X=X[:, shift:shift + centroid_length],
+                    Y=centroids,
+                    metric_kwargs={'squared': True,
+                                   'X_norm_squared': XX})
+    elif metric == 'cosine':
+        for shift in range(n_shifts):
+            best_labels[shift], best_distances[shift] = \
+                pairwise_distances_argmin_min(
+                    X=X[:, shift:shift + centroid_length],
+                    Y=centroids,
+                    metric=metric)
+    else:
+        sys.exit('%s metric not implemented' % metric)
+
+    # For each sample, find best shift
+    best_shifts = np.argmin(best_distances, axis=0)
+    best_labels = best_labels[best_shifts, np.arange(n_samples)]
+    best_distances = best_distances[best_shifts, np.arange(n_samples)]
+
+    return best_labels, best_shifts, best_distances
