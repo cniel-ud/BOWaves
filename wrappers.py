@@ -8,6 +8,8 @@ from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.metrics.pairwise import pairwise_distances_argmin_min
 from sklearn.utils.extmath import row_norms
 
+from scipy.cluster.vq import vq
+
 
 def si_euclidean_distances(centroids, X, X_norm_squared,
                            squared=False):
@@ -171,6 +173,64 @@ def si_pairwise_distances_argmin_min_toeplitz(X, centroids, metric, x_squared_no
                     X=X[:, shift:shift + centroid_length],
                     Y=centroids,
                     metric=metric)
+    else:
+        sys.exit('%s metric not implemented' % metric)
+
+    # For each sample, find best shift
+    best_shifts = np.argmin(best_distances, axis=0)
+    best_labels = best_labels[best_shifts, np.arange(n_samples)]
+    best_distances = best_distances[best_shifts, np.arange(n_samples)]
+
+    return best_labels, best_shifts, best_distances
+
+def si_pairwise_distances_argmin_min_scipyvq(X, centroids, metric, x_squared_norms):
+    """
+    Shift-invariant wrapper of argmin_min, but using scipy's vq instead.
+    Ablation based on 3rd comment of: https://stackoverflow.com/questions/21660937/get-nearest-point-to-centroid-scikit-learn
+
+    The scipy vq call by default uses the Euclidean metric. I'll implement that first and then add cosine
+    by just normalizing things before passing it in.
+
+    Parameters:
+    X (numpy.ndarray):
+        Training data. Rows of X are samples.
+    centroids (numpy.ndarray):
+        Centroids of the clusters.
+    x_squared_norms (numpy.ndarray):
+        Squared Euclidean norm of rows of X. This is used to speed up the
+        computation of the Euclidean distances between samples and centroids.
+    """
+
+    # euclidean_distances() requires 2D
+
+    #first if-else commented out for testing
+    #if metric == 'euclidean' and x_squared_norms.ndim == 1:
+    #    x_squared_norms = x_squared_norms.reshape(1, -1)
+    if centroids.ndim == 1:
+        centroids = centroids.reshape(1, -1)
+
+    n_samples, sample_length = X.shape
+    centroid_length = centroids.shape[1]
+    n_shifts = sample_length - centroid_length + 1
+
+    best_labels = np.empty((n_shifts, n_samples), dtype=int)
+    best_distances = np.empty((n_shifts, n_samples))
+
+    if metric == 'euclidean':
+        for shift in range(n_shifts):
+            # A bug on sklearn enforces a 2D array
+            #XX = x_squared_norms[shift].reshape((n_samples, 1))
+            best_labels[shift], best_distances[shift] = \
+                vq(X[:, shift:shift+centroid_length], centroids)
+    elif metric == 'cosine':
+        print("ERROR")
+        return
+        # for shift in range(n_shifts):
+        #     best_labels[shift], best_distances[shift] = \
+        #         pairwise_distances_argmin_min(
+        #             X=X[:, shift:shift+centroid_length],
+        #             Y=centroids,
+        #             metric=metric)
     else:
         sys.exit('%s metric not implemented' % metric)
 

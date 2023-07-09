@@ -140,4 +140,7 @@ if args.visualize:
     img_dir_exp.mkdir(exist_ok=True)
 
     img_file = str(out_file).replace('.npz', '_img')
+
+    #for testing the scipyvq instead of sklearn pairwise argmin min
+    img_file = img_file + '_scipyvq_test'
     plt.savefig(str(img_dir_exp) + '/' + img_file)

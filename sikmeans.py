@@ -459,8 +459,11 @@ def _assignment_step(X, centroids, metric, x_squared_norms):
         distances[i] is the distance of X[i, shifts[i]:shifts[i]+ centroid_length] to the closest centroid.
     """
 
+    #for testing
+    metric = 'euclidean'
+
     labels, shifts, distances =\
-        wrappers.si_pairwise_distances_argmin_min(
+        wrappers.si_pairwise_distances_argmin_min_scipyvq(
             X, centroids, metric, x_squared_norms)
 
     # Samples whose distance to the silent waveform (i.e, their own norm) is
