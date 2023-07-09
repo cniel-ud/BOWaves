@@ -419,6 +419,7 @@ def si_kmeans_single(X, n_clusters, centroid_length, metric='euclidean',\
             best_inertia = inertia
 
         centroid_change = squared_norm(centroids_old - centroids)
+        print(centroid_change, tol)
         if centroid_change <= tol:
             if verbose:
                 print("Converged at iteration %d: "
@@ -460,7 +461,7 @@ def _assignment_step(X, centroids, metric, x_squared_norms):
     """
 
     #for testing
-    metric = 'euclidean'
+    #metric = 'euclidean'
 
     labels, shifts, distances =\
         wrappers.si_pairwise_distances_argmin_min_scipyvq(

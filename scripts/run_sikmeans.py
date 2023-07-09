@@ -142,5 +142,5 @@ if args.visualize:
     img_file = str(out_file).replace('.npz', '_img')
 
     #for testing the scipyvq instead of sklearn pairwise argmin min
-    img_file = img_file + '_scipyvq_test'
+    img_file = img_file + '_scipyvq_cosine_test'
     plt.savefig(str(img_dir_exp) + '/' + img_file)

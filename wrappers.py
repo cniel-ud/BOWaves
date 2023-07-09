@@ -7,6 +7,7 @@ import numpy as np
 from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.metrics.pairwise import pairwise_distances_argmin_min
 from sklearn.utils.extmath import row_norms
+from sklearn.preprocessing import normalize
 
 from scipy.cluster.vq import vq
 
@@ -223,14 +224,28 @@ def si_pairwise_distances_argmin_min_scipyvq(X, centroids, metric, x_squared_nor
             best_labels[shift], best_distances[shift] = \
                 vq(X[:, shift:shift+centroid_length], centroids)
     elif metric == 'cosine':
-        print("ERROR")
-        return
-        # for shift in range(n_shifts):
-        #     best_labels[shift], best_distances[shift] = \
-        #         pairwise_distances_argmin_min(
-        #             X=X[:, shift:shift+centroid_length],
-        #             Y=centroids,
-        #             metric=metric)
+        # if metric is cosine, just pass in the normalized waves. That'll make it spherical / amplitude invariant
+        for shift in range(n_shifts):
+            # Preprocessing
+            # Step 1: Normalize the vectors
+            normalized_X = normalize(X[:, shift:shift + centroid_length], axis=1)
+
+
+            # question for Dr. B - do we need to normalize the centroids here? I don't think so
+            # Step 2: Calculate cosine similarity
+            #cosine_sim = normalized_X @ centroids.T
+
+            # Step 3: Convert cosine similarity to cosine distance
+            #cosine_dist = 1 - cosine_sim
+
+            # Reshape centroids matrix
+            #reshaped_centroids = np.reshape(centroids, (1, -1))
+
+            #print(shape(cosine_dist))
+            #print(reshaped_centroids.shape())
+
+            best_labels[shift], best_distances[shift] = \
+                vq(normalized_X, centroids)
     else:
         sys.exit('%s metric not implemented' % metric)
 
