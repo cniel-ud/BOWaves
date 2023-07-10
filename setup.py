@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 # with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
 #     long_description = "\n" + fh.read()
 
-VERSION = '0.0.22'
+VERSION = '0.0.23'
 DESCRIPTION = 'Learning representative waveforms'
 LONG_DESCRIPTION = 'Learning representative waveforms for time series clustering and dictionary learning'
 
