@@ -9,7 +9,7 @@ import scipy.sparse as sp
 from sklearn.utils.extmath import stable_cumsum, squared_norm, row_norms
 from sklearn.exceptions import ConvergenceWarning
 
-from utilities import sikmeans_utils, wrappers
+from src.BOWaves.utilities import wrappers, sikmeans_utils
 
 
 ###############################################################################
@@ -147,11 +147,11 @@ def _kmeans_plus_plus(X, n_clusters, centroid_length, x_squared_norms,\
     sample_id = rng.integers(n_samples)
     if sp.issparse(X):
         all_windows = sikmeans_utils.pick_random_windows(X[sample_id].toarray(),
-                                                n_windows, centroid_length,
-                                                rng)
+                                                         n_windows, centroid_length,
+                                                         rng)
     else:
         all_windows = sikmeans_utils.pick_random_windows(X[sample_id], n_windows,
-                                                centroid_length, rng)
+                                                         centroid_length, rng)
     all_windows = all_windows.squeeze(axis=0)
 
     # Initialize list of closest distances.
@@ -237,7 +237,7 @@ def _random_init(X, n_clusters, centroid_length, rng):
     seeds = rng.permutation(n_samples)[:n_clusters]
     centroids = X[seeds]
     centroids = sikmeans_utils.pick_random_windows(centroids, 1, centroid_length,
-                                          rng).squeeze()
+                                                   rng).squeeze()
 
     return centroids
 
