@@ -31,30 +31,7 @@ cluster_size = cluster_size[isort]
 # Iterate over the centroids and plot each as a waveform
 
 #print(centroids[0])
-'''
-x=np.arange(len(centroids[0]))
-plt.plot(x, centroids[0])
 
-"""
-for i, centroid in enumerate(centroids):
-    # Generate x-axis values based on the length of the centroid
-    x = np.arange(len(centroid))
-
-    # Plot the waveform
-    plt.plot(x, centroid, label=f"Centroid {i + 1}")
-"""
-
-# Set the plot title and labels
-plt.title("Centroids as Waveforms")
-plt.xlabel("Time")
-plt.ylabel("Amplitude")
-
-# Show a legend
-#plt.legend()
-
-# Display the plot
-plt.show()
-'''
 # Assuming centroids contains the one-dimensional time series data
 
 # Determine the grid dimensions based on the number of centroids

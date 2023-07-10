@@ -202,6 +202,8 @@ def si_pairwise_distances_argmin_min_scipyvq(X, centroids, metric, x_squared_nor
         computation of the Euclidean distances between samples and centroids.
     """
 
+    # TODO - make sure to reproduce with set random seed
+
     # euclidean_distances() requires 2D
 
     #first if-else commented out for testing
@@ -229,6 +231,8 @@ def si_pairwise_distances_argmin_min_scipyvq(X, centroids, metric, x_squared_nor
             # Preprocessing
             # Step 1: Normalize the vectors
             normalized_X = normalize(X[:, shift:shift + centroid_length], axis=1)
+
+            # TODO - need to normalize the centroids as well
 
 
             # question for Dr. B - do we need to normalize the centroids here? I don't think so
