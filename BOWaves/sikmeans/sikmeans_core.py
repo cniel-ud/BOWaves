@@ -9,7 +9,7 @@ import scipy.sparse as sp
 from sklearn.utils.extmath import stable_cumsum, squared_norm, row_norms
 from sklearn.exceptions import ConvergenceWarning
 
-from src.BOWaves.utilities import wrappers, sikmeans_utils
+from BOWaves.utilities import sikmeans_utils, wrappers
 
 
 ###############################################################################
