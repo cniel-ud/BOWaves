@@ -1,0 +1,7 @@
+README.md
+setup.py
+BOWaves.egg-info/PKG-INFO
+BOWaves.egg-info/SOURCES.txt
+BOWaves.egg-info/dependency_links.txt
+BOWaves.egg-info/requires.txt
+BOWaves.egg-info/top_level.txt
