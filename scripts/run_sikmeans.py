@@ -51,7 +51,7 @@ data = np.load(fpath)
 # for key in data.keys():
 #     print(key)
 
-data = data['freq']
+data = data['T']
 #calculate variance before splitting into windows
 variance = np.var(data)
 
