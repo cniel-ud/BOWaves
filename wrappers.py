@@ -233,7 +233,7 @@ def si_pairwise_distances_argmin_min_scipyvq(X, centroids, metric, x_squared_nor
             normalized_X = normalize(X[:, shift:shift + centroid_length], axis=1)
 
             # TODO - need to normalize the centroids as well
-
+            normalized_centroids = normalize(centroids, axis=1)
 
             # question for Dr. B - do we need to normalize the centroids here? I don't think so
             # Step 2: Calculate cosine similarity
@@ -249,7 +249,7 @@ def si_pairwise_distances_argmin_min_scipyvq(X, centroids, metric, x_squared_nor
             #print(reshaped_centroids.shape())
 
             best_labels[shift], best_distances[shift] = \
-                vq(normalized_X, centroids)
+                vq(normalized_X, normalized_centroids)
     else:
         sys.exit('%s metric not implemented' % metric)
 

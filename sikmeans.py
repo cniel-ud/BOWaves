@@ -419,7 +419,7 @@ def si_kmeans_single(X, n_clusters, centroid_length, metric='euclidean',\
             best_inertia = inertia
 
         centroid_change = squared_norm(centroids_old - centroids)
-        print(centroid_change, tol)
+        #print(centroid_change, tol)
         if centroid_change <= tol:
             if verbose:
                 print("Converged at iteration %d: "

@@ -47,6 +47,14 @@ with np.load(fpath, allow_pickle=True) as data:
     T = data['T']
     splice = data['splice']
 
+data = np.load(fpath)
+# for key in data.keys():
+#     print(key)
+
+data = data['freq']
+#calculate variance before splitting into windows
+variance = np.var(data)
+
 tot_win = np.sum(np.diff(np.r_[0, splice, T.size])//win_len)
 X = np.zeros((tot_win, win_len))
 start_arr = np.r_[0, splice]
