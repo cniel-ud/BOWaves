@@ -54,6 +54,7 @@ data = np.load(fpath)
 data = data['T']
 #calculate variance before splitting into windows
 variance = np.var(data)
+#print("Variance: ", variance)
 
 tot_win = np.sum(np.diff(np.r_[0, splice, T.size])//win_len)
 X = np.zeros((tot_win, win_len))
