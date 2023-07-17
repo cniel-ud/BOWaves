@@ -814,6 +814,7 @@ k, P = args.num_clusters, args.centroid_len
 metric, init = 'cosine', 'random'
 n_runs, rng = 30, 13
 
+X_test = X.copy()
 #only timing the sikmeans portion.
 t_start_sklearn = perf_counter()
 centroids, labels, shifts, distances, _, _ = shift_invariant_k_means(
@@ -822,7 +823,7 @@ t_stop_sklearn = perf_counter()
 
 t_start_scipyvq = perf_counter()
 centroids, labels, shifts, distances, _, _ = shift_invariant_k_means(
-    X, k, P, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
+    X_test, k, P, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
 t_stop_scipyvq = perf_counter()
 
 out_file = f'sikmeans_k-{k}_P-{P}_wlen-{win_len}.npz'
