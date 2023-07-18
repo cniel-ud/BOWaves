@@ -1,20 +1,30 @@
-"""Shift-invariant k-means"""
+"""
+This file same as run_sikmeans.py except that I run it twice for scipy_vq and sklearn over a larger synthetic dataset
+to more accurately compare the timings. Don't run this unless you want to run the test. Otherwise it runs with the
+same commands as for run_sikmeans.py
+"""
 
-import sys
-import warnings
-
+from argparse import ArgumentParser
+from time import perf_counter
+from pathlib import Path
 import numpy as np
 import scipy.sparse as sp
+import warnings
 
 from sklearn.utils.extmath import stable_cumsum, squared_norm, row_norms
 from sklearn.exceptions import ConvergenceWarning
 
-from BOWaves.utilities import sikmeans_utils, wrappers
+import os
+import sys
+import matplotlib.pyplot as plt
+os.unsetenv('OMP_THREAD_LIMIT')
 
+currentdir = os.path.dirname(os.path.abspath(__file__))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
 
-###############################################################################
-# Initialization
-
+from utils import *
+from wrappers import *
 
 def init_centroids(X, n_clusters, centroid_length, metric='euclidean',\
     init='k-means++', x_squared_norms=None, rng=None, **kwargs):
@@ -56,14 +66,15 @@ def init_centroids(X, n_clusters, centroid_length, metric='euclidean',\
         The centroid seeds
     """
 
-    rng = sikmeans_utils.check_rng(rng)
+    rng = check_rng(rng)
+    #rng = BOWaves.utils.check_rng(rng)
 
     n_samples, sample_length = X.shape
 
     if isinstance(init, str) and init == 'k-means++':
         if isinstance(metric, str) and metric == 'euclidean':
             if x_squared_norms is None:
-                x_squared_norms = wrappers.si_row_norms(
+                x_squared_norms = si_row_norms(
                     X, centroid_length, squared=True)
             if len(kwargs) == 0 or 'n_local_trials' not in kwargs:
                 n_local_trials = None
@@ -146,19 +157,19 @@ def _kmeans_plus_plus(X, n_clusters, centroid_length, x_squared_norms,\
     # randomly selected.
     sample_id = rng.integers(n_samples)
     if sp.issparse(X):
-        all_windows = sikmeans_utils.pick_random_windows(X[sample_id].toarray(),
-                                                         n_windows, centroid_length,
-                                                         rng)
+        all_windows = parentdir.utils.pick_random_windows(X[sample_id].toarray(),
+                                                n_windows, centroid_length,
+                                                rng)
     else:
-        all_windows = sikmeans_utils.pick_random_windows(X[sample_id], n_windows,
-                                                         centroid_length, rng)
+        all_windows = parentdir.utils.pick_random_windows(X[sample_id], n_windows,
+                                                centroid_length, rng)
     all_windows = all_windows.squeeze(axis=0)
 
     # Initialize list of closest distances.
     # closest_dist_sq.shape=(n_windows,n_windows,centroid_length). The first
     # dimension is the number of shifts of each window, which is also equal to
     # the number of windows.
-    closest_dist_sq = wrappers.si_euclidean_distances(
+    closest_dist_sq = parentdir.wrappers.si_euclidean_distances(
         all_windows, X, x_squared_norms, squared=True)
 
     # Potential: the sum of squared distances to closest centroid
@@ -190,11 +201,11 @@ def _kmeans_plus_plus(X, n_clusters, centroid_length, x_squared_norms,\
         # Pick all windows from each candidate sample.
         # all_windows.shape=(n_local_trials,n_windows,centroid_length)
         if sp.issparse(X):
-            all_windows = sikmeans_utils.pick_random_windows(
+            all_windows = parentdir.utils.pick_random_windows(
                 X[candidate_ids].toarray(), n_windows, centroid_length,
                 rng)
         else:
-            all_windows = sikmeans_utils.pick_random_windows(
+            all_windows = parentdir.utils.pick_random_windows(
                 X[candidate_ids], n_windows, centroid_length, rng)
 
         # Compute distances to centroid candidates for all windows
@@ -202,7 +213,7 @@ def _kmeans_plus_plus(X, n_clusters, centroid_length, x_squared_norms,\
             (n_local_trials, n_windows, n_windows, n_samples))
         for trial in np.arange(n_local_trials):
             distance_to_candidates[trial] = \
-                wrappers.si_euclidean_distances(
+                si_euclidean_distances(
                     all_windows[trial], X, X_norm_squared=x_squared_norms,
                     squared=True)
 
@@ -236,8 +247,8 @@ def _random_init(X, n_clusters, centroid_length, rng):
     n_samples = X.shape[0]
     seeds = rng.permutation(n_samples)[:n_clusters]
     centroids = X[seeds]
-    centroids = sikmeans_utils.pick_random_windows(centroids, 1, centroid_length,
-                                                   rng).squeeze()
+    centroids = pick_random_windows(centroids, 1, centroid_length,
+                                          rng).squeeze()
 
     return centroids
 
@@ -248,7 +259,7 @@ def _random_energy_init(X, n_clusters, centroid_length, rng):
     windows = X[seeds]
     # Pick all windows
     # (n_rows, n_offsets, window_length)
-    windows = sikmeans_utils.pick_windows(windows, centroid_length, offset='all')
+    windows = parentdir.utils.pick_windows(windows, centroid_length, offset='all')
     shifts = np.empty(n_clusters, dtype=np.int64)
     for i_centroid in range(n_clusters):
         energy = row_norms(windows[i_centroid], squared=False)
@@ -321,7 +332,7 @@ def shift_invariant_k_means(X, n_clusters, centroid_length, metric='euclidean',\
         Number of iterations needed to achieve convergence, according to `tol`.
     """
 
-    rng = sikmeans_utils.check_rng(rng)
+    rng = check_rng(rng)
 
     best_labels, best_shifts, best_centroids = None, None, None
     best_distances, best_inertia, best_n_iter = None, None, None
@@ -335,7 +346,7 @@ def shift_invariant_k_means(X, n_clusters, centroid_length, metric='euclidean',\
     # windows (shifts) of X. x_squared_norms.shape=(n_shifts, n_samples).
     x_squared_norms = None
     if isinstance(metric, str) and metric == 'euclidean':
-        x_squared_norms = wrappers.si_row_norms(X, centroid_length,
+        x_squared_norms = parentdir.wrappers.si_row_norms(X, centroid_length,
                                                 squared=True)
 
 
@@ -375,11 +386,11 @@ def si_kmeans_single(X, n_clusters, centroid_length, metric='euclidean',\
     Single run of shift-invariant k-means
     """
 
-    rng = sikmeans_utils.check_rng(rng)
+    rng = check_rng(rng)
 
     if isinstance(metric, str) and metric == 'euclidean':
         if x_squared_norms is None:
-            x_squared_norms = wrappers.si_row_norms(
+            x_squared_norms = parentdir.wrappers.si_row_norms(
                 X, centroid_length, squared=True)
 
     best_labels, best_shifts, best_centroids = None, None, None
@@ -464,7 +475,7 @@ def _assignment_step(X, centroids, metric, x_squared_norms):
     #metric = 'euclidean'
 
     labels, shifts, distances =\
-        wrappers.si_pairwise_distances_argmin_min_scipyvq(
+        si_pairwise_distances_argmin_min(
             X, centroids, metric, x_squared_norms)
 
     # Samples whose distance to the silent waveform (i.e, their own norm) is
@@ -528,3 +539,368 @@ def _init_centroids_update_step(X, centroid_length, n_clusters, labels, shifts):
         centroids[k,:]/= cluster_sizes[k]
 
     return centroids
+
+
+def shift_invariant_k_means_scipyvq(X, n_clusters, centroid_length, metric='euclidean',\
+    init='k-means++', n_init=10, max_iter=300, tol=1e-4, rng=None, verbose=False):
+    """
+    Shift-invariant k-means algorithm
+
+    Parameters
+    ----------
+    X (numpy.ndarray):
+        Data matrix with samples in its rows.
+    n_clusters (int):
+        Number of clusters to form, as well as the number of centroids to find.
+    centroid_length (int):
+        The length of each centroid.
+    metric ('euclidean' or 'cosine'):
+        Metric used to compute the distance between samples and cluster centroids. Default: 'euclidean'.
+    init ('k-means++', 'random', numpy.ndarray, or a function):
+        Method for initialization. If it's a function, it should have this
+        call signature:
+        centroids, shifts = init(
+             X, n_clusters, centroid_length, rng, **kwargs).
+        rng must be a Generator instance.
+    n_init (int):
+        The number of times the algorithm is run with different centroid seeds.
+        The final results would be from the iteration where the inertia is the
+        lowest.
+    max_iter (init):
+        Maximum number of iterations the algorithm will be run.
+    tol (float):
+        Upper bound that the squared euclidean norm of the change in the
+        centroids must achieve to declare convergence.
+    rng (int, Generator instance or None):
+        Determines random number generation for centroid initialization. Use an
+        int to make the randomness deterministic.
+    verbose (bool):
+        If True, print details about each iteration.
+
+    Returns
+    -------
+    centroids (numpy.ndarray):
+        A matrix with the learned centroids in its rows.
+    labels (numpy.ndarray):
+        labels[i] is the index of the centroid (row of `centroids`) closest
+        to the sample X[i].
+    shifts (numpy.ndarray):
+        shift[i] is the shift that minimizes the distance to the closest
+        centroid to the sample X[i].
+    distances (numpy.ndarray):
+        distances[i] is the distance from X[i,shift[i]:shift[i]+centroid_length]
+        to its closest centroid.
+    inertia (float):
+        The sum of squared euclidean distances to the closest centroid of all the
+        training samples.
+    best_n_iter (int):
+        Number of iterations needed to achieve convergence, according to `tol`.
+    """
+
+    rng = check_rng(rng)
+
+    best_labels, best_shifts, best_centroids = None, None, None
+    best_distances, best_inertia, best_n_iter = None, None, None
+
+    # subtract of mean of x for more accurate distance computations
+    # NOTE: Can't do that because each centroid is the average of windows from X
+    # that were chosen at different starting times.
+
+    # Precompute squared norms of rows of X for efficient computation of
+    # euclidean distances between centroids and samples. Do this for each set of
+    # windows (shifts) of X. x_squared_norms.shape=(n_shifts, n_samples).
+    x_squared_norms = None
+    if isinstance(metric, str) and metric == 'euclidean':
+        x_squared_norms = parentdir.wrappers.si_row_norms(X, centroid_length,
+                                                squared=True)
+
+
+    ss = rng.bit_generator._seed_seq
+    child_seeds = ss.spawn(n_init)
+    streams = [np.random.default_rng(s) for s in child_seeds]
+
+    for seed in streams:
+        # run a shift-invariant k-means once
+        centroids, labels, shifts, distances, inertia, n_iter_ = si_kmeans_single_scipyvq(
+            X, n_clusters, centroid_length, metric=metric, init=init, max_iter=max_iter, tol=tol, x_squared_norms=x_squared_norms, rng=seed, verbose=verbose)
+        # determine if these results are the best so far
+        if best_inertia is None or inertia < best_inertia:
+            best_centroids = centroids.copy()
+            best_labels = labels.copy()
+            best_shifts = shifts.copy()
+            best_distances = distances
+            best_inertia = inertia
+            best_n_iter = n_iter_
+
+    distinct_clusters = len(set(best_labels))
+
+    if distinct_clusters < n_clusters:
+        warnings.warn(
+            "Number of distinct clusters ({}) found smaller than "
+            "n_clusters ({}). Possibly due to duplicate points "
+            "in X.".format(distinct_clusters, n_clusters), ConvergenceWarning,
+            stacklevel=2
+        )
+
+    return best_centroids, best_labels, best_shifts, best_distances, best_inertia, best_n_iter
+
+
+def si_kmeans_single_scipyvq(X, n_clusters, centroid_length, metric='euclidean',\
+    init='k-means++', max_iter=300, tol=1e-3, x_squared_norms=None, rng=None, verbose=False):
+    """
+    Single run of shift-invariant k-means
+    """
+
+    rng = check_rng(rng)
+
+    if isinstance(metric, str) and metric == 'euclidean':
+        if x_squared_norms is None:
+            x_squared_norms = parentdir.wrappers.si_row_norms(
+                X, centroid_length, squared=True)
+
+    best_labels, best_shifts, best_centroids = None, None, None
+    best_distances, best_inertia = None, None
+
+    # Init
+    centroids = init_centroids(
+        X, n_clusters, centroid_length, metric, init, x_squared_norms, rng)
+
+    #The below is Dr. B's additions from the Jupyter notebook.
+    #I've added the update step function to the utils file.
+    #Adding here to test before PR
+    labels, shifts, distances = _assignment_step_scipyvq(
+        X, centroids, metric, x_squared_norms)
+    centroids = _init_centroids_update_step(
+        X, centroid_length, n_clusters, labels, shifts) # NEW
+
+    if verbose:
+        print('Initialization completed.')
+
+    for iteration in range(max_iter):
+        centroids_old = centroids.copy()
+        labels, shifts, distances = _assignment_step_scipyvq(X, centroids, metric, x_squared_norms)
+        centroids = _centroids_update_step(
+            X, centroid_length, n_clusters, labels, shifts)
+
+        inertia = distances.sum()
+
+        if verbose:
+            print("Iteration %2d, inertia %.3f" % (iteration, inertia))
+
+        if best_inertia is None or inertia < best_inertia:
+            best_labels = labels.copy()
+            best_shifts = shifts.copy()
+            best_centroids = centroids.copy()
+            best_distances = distances
+            best_inertia = inertia
+
+        centroid_change = squared_norm(centroids_old - centroids)
+        #print(centroid_change, tol)
+        if centroid_change <= tol:
+            if verbose:
+                print("Converged at iteration %d: "
+                      "centroid changes %e within tolerance %e"
+                      % (iteration, centroid_change, tol))
+            break
+
+    if centroid_change > 0:
+        # rerun asingment step in case of non-convergence so that predicted
+        # labels match cluster centers
+        best_labels, best_shifts, distances = _assignment_step(X, best_centroids, metric, x_squared_norms)
+        best_inertia = distances.sum()
+
+    return best_centroids, best_labels, best_shifts, best_distances, best_inertia, iteration+1
+
+
+def _assignment_step_scipyvq(X, centroids, metric, x_squared_norms):
+    """
+    Find the index of the shifted centroid that is closest to each sample
+
+    Parameters
+    ----------
+    X (numpy.ndarray):
+        Training data. Rows of X are samples.
+    centroids (numpy.ndarray):
+        Centroids of the clusters.
+    x_squared_norms (numpy.ndarray):
+        Squared Euclidean norm of rows of X. This is used to speed up the
+        computation of the Euclidean distances between samples and centroids.
+
+    Returns
+    -------
+    labels (numpy.ndarray):
+        centroids[labels[i]] is the centroid closest to sample X[i]
+    shifts (numpy.ndarray):
+        X[i, shifts[i]:shifts[i]+centroid_length] is the window in X[i]  closest to centroids[labels[i]].
+    distances (numpy.ndarray):
+        distances[i] is the distance of X[i, shifts[i]:shifts[i]+ centroid_length] to the closest centroid.
+    """
+
+    #for testing
+    #metric = 'euclidean'
+
+    labels, shifts, distances =\
+        si_pairwise_distances_argmin_min_scipyvq(
+            X, centroids, metric, x_squared_norms)
+
+    # Samples whose distance to the silent waveform (i.e, their own norm) is
+    # smaller than the smallest distance to one cluster are left unassigned.
+#    xsn = x_squared_norms[shifts, np.arange(X.shape[0])]
+#    discard_ind=np.where(xsn < distances)[0]
+#    labels[discard_ind] = -1
+
+    return labels, shifts, distances
+
+
+
+
+
+#from sikmeans import shift_invariant_k_means
+
+# Parse command-line arguments
+parser = ArgumentParser()
+parser.add_argument('experiment', help='Experiment name')
+parser.add_argument("--root", help="Path to root folder")
+parser.add_argument("--centroid-len", type=int, default=512,
+                    help="Centroid length")
+parser.add_argument("--window-len", type=int, default=768,
+                    help="Length of non-overlapping window length")
+parser.add_argument('--num-clusters', type=int,
+                    default=128, help='Number of clusters')
+parser.add_argument('--visualize', default=True, help="Print out codebooks")
+parser.add_argument('--visualize_cutoff', type=int, default=5,
+                    help="Only centroids with this many occurrences or above are visualized. Set to zero to visualize all")
+# TODO - make metric and init type as command line arguments
+
+args = parser.parse_args()
+win_len = args.window_len
+root = Path(args.root)
+data_dir = root.joinpath('data', args.experiment)
+data_dir.mkdir(exist_ok=True)
+
+
+results_dir = root.joinpath('results', args.experiment)
+results_dir.mkdir(exist_ok=True)
+
+
+fpath = list(data_dir.glob('*.npz'))[0]
+with np.load(fpath, allow_pickle=True) as data:
+    T = data['T']
+    splice = data['splice']
+
+data = np.load(fpath)
+# for key in data.keys():
+#     print(key)
+
+data = data['T']
+#calculate variance before splitting into windows
+variance = np.var(data)
+#print("Variance: ", variance)
+
+tot_win = np.sum(np.diff(np.r_[0, splice, T.size])//win_len)
+X = np.zeros((tot_win, win_len))
+start_arr = np.r_[0, splice]
+end_arr = np.r_[splice, T.size]
+start_x = 0
+for start, end in zip(start_arr, end_arr):
+    segment = T[start:end]
+    n_win = segment.size//win_len
+    i_win = np.arange(0, n_win*win_len, win_len)
+    i_win = i_win[:, None] + np.arange(win_len)[None, :]
+    X[start_x:start_x+n_win] = segment[i_win]
+    start_x = start_x + n_win
+
+k, P = args.num_clusters, args.centroid_len
+metric, init = 'cosine', 'random'
+n_runs, rng = 30, 13
+
+X_test = X.copy()
+#only timing the sikmeans portion.
+t_start_sklearn = perf_counter()
+centroids, labels, shifts, distances, _, _ = shift_invariant_k_means(
+    X, k, P, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
+t_stop_sklearn = perf_counter()
+
+t_start_scipyvq = perf_counter()
+centroids, labels, shifts, distances, _, _ = shift_invariant_k_means(
+    X_test, k, P, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
+t_stop_scipyvq = perf_counter()
+
+out_file = f'sikmeans_k-{k}_P-{P}_wlen-{win_len}.npz'
+out_file_full = results_dir.joinpath(out_file)
+ # with out_file_full.open('wb') as f:
+ #     np.savez(f, centroids=centroids, labels=labels,
+ #              shifts=shifts, distances=distances)
+
+print(f'sklearn pairwise distances finished after {t_stop_sklearn-t_start_sklearn} seconds!')
+print(f'scipyvq pairwise distances finished after {t_stop_scipyvq-t_start_scipyvq} seconds!')
+
+
+#out_file = f'sikmeans_k-128_P-512_wlen-768.npz'
+#out_file_full = results_dir.joinpath(out_file)
+
+if args.visualize:
+    with np.load(out_file_full) as data:
+        centroids = data['centroids']
+        labels = data['labels']
+        shifts = data['shifts']
+        distances = data['distances']
+
+    unique_labels, cluster_size = np.unique(labels, return_counts=True)
+
+    # Sort centroids in descending order of cluster size
+    isort = np.argsort(-cluster_size)
+    centroids = centroids[isort]
+    unique_labels = unique_labels[isort]
+    cluster_size = cluster_size[isort]
+    # Determine the grid dimensions based on the number of centroids
+
+    # determine number of centroids over some cluster size cutoff
+    #args.visualize_cutoff = 5
+    number = 0
+    for i in cluster_size:
+        if i >= args.visualize_cutoff:
+            number += 1
+
+    num_centroids = len(centroids)
+    num_rows = int(np.ceil(np.sqrt(number)))
+    num_cols = int(np.ceil(number / num_rows))
+
+    # Create subplots with the determined grid dimensions
+    fig, axs = plt.subplots(num_rows, num_cols, figsize=(12, 8))
+
+    # Flatten the axs array if necessary
+    if num_centroids == 1:
+        axs = np.array([axs])
+
+    # Iterate over the centroids and plot each as a waveform in a separate subplot
+    for i, centroid in enumerate(centroids):
+        if cluster_size[i] >= 5:
+            # Determine the subplot indices
+            row_idx = i // num_cols
+            col_idx = i % num_cols
+
+            # Plot the waveform in the corresponding subplot
+            axs[row_idx, col_idx].plot(centroid)
+            # axs[row_idx, col_idx].set_title(f"Centroid {i + 1}")
+            axs[row_idx, col_idx].set_title(cluster_size[i])
+
+    # Remove empty subplots if the number of centroids is not a perfect square
+    if num_centroids % num_cols != 0:
+        for i in range(num_centroids, num_rows * num_cols):
+            axs.flatten()[i].axis('off')
+
+    # Adjust the spacing between subplots
+    plt.tight_layout()
+
+    # Save the plot to images subdirectory
+    img_dir = root.joinpath('img')#, args.experiment)
+    img_dir.mkdir(exist_ok=True)
+    img_dir_exp = img_dir.joinpath(args.experiment)
+    img_dir_exp.mkdir(exist_ok=True)
+
+    img_file = str(out_file).replace('.npz', '_img')
+
+    #for testing the scipyvq instead of sklearn pairwise argmin min
+    img_file = img_file + '_scipyvq_cosine_test'
+    plt.savefig(str(img_dir_exp) + '/' + img_file)

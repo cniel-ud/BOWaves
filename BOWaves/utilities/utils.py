@@ -342,3 +342,22 @@ class Args2Filename:
         fn = getattr(self, fn_name)
 
         return fn()
+
+
+# May redo this later to automatically adjust tolerance by variance. otherwise use np.var() call for variance.
+# def variance(data):
+#     """
+#     This is for finding the variance of a time series signal, so that we can adjust the tolerance of the kmeans.
+#
+#     Parameters
+#     ----------
+#     data: Numpy array.
+#
+#     Returns
+#     -------
+#     variance: Float. What the variance of the time series is
+#     """
+#
+#
+#
+#     pass

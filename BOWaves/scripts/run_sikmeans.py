@@ -1,13 +1,12 @@
 from argparse import ArgumentParser
-import os
 from time import perf_counter
-os.unsetenv('OMP_THREAD_LIMIT')
 from pathlib import Path
 import numpy as np
 
 import os
 import sys
 import matplotlib.pyplot as plt
+os.unsetenv('OMP_THREAD_LIMIT')
 
 currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
@@ -30,6 +29,7 @@ parser.add_argument('--num-clusters', type=int,
 parser.add_argument('--visualize', default=True, help="Print out codebooks")
 parser.add_argument('--visualize_cutoff', type=int, default=5,
                     help="Only centroids with this many occurrences or above are visualized. Set to zero to visualize all")
+# TODO - make metric and init type as command line arguments
 
 args = parser.parse_args()
 win_len = args.window_len
@@ -46,6 +46,15 @@ fpath = list(data_dir.glob('*.npz'))[0]
 with np.load(fpath, allow_pickle=True) as data:
     T = data['T']
     splice = data['splice']
+
+data = np.load(fpath)
+# for key in data.keys():
+#     print(key)
+
+data = data['T']
+#calculate variance before splitting into windows
+variance = np.var(data)
+#print("Variance: ", variance)
 
 tot_win = np.sum(np.diff(np.r_[0, splice, T.size])//win_len)
 X = np.zeros((tot_win, win_len))
@@ -140,4 +149,7 @@ if args.visualize:
     img_dir_exp.mkdir(exist_ok=True)
 
     img_file = str(out_file).replace('.npz', '_img')
+
+    #for testing the scipyvq instead of sklearn pairwise argmin min
+    img_file = img_file + '_scipyvq_cosine_test'
     plt.savefig(str(img_dir_exp) + '/' + img_file)

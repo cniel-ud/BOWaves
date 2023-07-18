@@ -1,0 +1,9 @@
+img/
+BOWaves/
+BOWaves.egg-info/
+dist/
+.idea
+__pycache__/
+*/__pycache__*
+build/*
+

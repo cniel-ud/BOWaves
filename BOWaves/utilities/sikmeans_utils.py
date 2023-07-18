@@ -170,3 +170,4 @@ def pick_windows(array, window_length, offset='all'):
     col_id = col_id + offset
 
     return array[row_id, col_id]
+
