@@ -14,6 +14,13 @@ By default, the script will save an image of the centroids it finds within your 
 
 Please let me (Austin Meek) know if you have any questions.
 
+## Install
+
+    pip install BOWaves
+
+
+## Citation
+
 Note: This repo is adapted from https://github.com/chmendoza/sikcsp. If you find it useful, please consider citing our paper:
 
 ```bibtex

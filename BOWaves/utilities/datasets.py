@@ -1,6 +1,6 @@
 from typing import Any
 import numpy as np
-from utilities.utils import check_rng
+from BOWaves.utilities.utils import check_rng
 
 def morlet_signal(
     freqs: np.ndarray,

@@ -2,9 +2,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from spectrum import MultiTapering
-from utilities.datasets import morlet_signal
+from BOWaves.utilities.datasets import morlet_signal
 from pathlib import Path
-from utilities.utils import get_project_root
+from BOWaves.utilities.utils import get_project_root
 
 #%% Generate signal from Morlet wavelets
 sig_params = dict(
