@@ -464,7 +464,7 @@ def _assignment_step(X, centroids, metric, x_squared_norms):
     #metric = 'euclidean'
 
     labels, shifts, distances =\
-        wrappers.si_pairwise_distances_argmin_min_scipyvq(
+        wrappers.si_pairwise_distances_argmin_min(
             X, centroids, metric, x_squared_norms)
 
     # Samples whose distance to the silent waveform (i.e, their own norm) is

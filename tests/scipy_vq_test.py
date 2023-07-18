@@ -23,8 +23,8 @@ currentdir = os.path.dirname(os.path.abspath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir)
 
-from utils import *
-from wrappers import *
+from BOWaves.utilities.utils import *
+from BOWaves.utilities.wrappers import *
 
 def init_centroids(X, n_clusters, centroid_length, metric='euclidean',\
     init='k-means++', x_squared_norms=None, rng=None, **kwargs):
