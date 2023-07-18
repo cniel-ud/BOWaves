@@ -11,7 +11,10 @@ FILE_ID_PAT = '.*/rx(?P<id>\d+).mat$'
 RX_GLOB = 'rx*.mat'
 
 def get_project_root() -> str:
-    return str(Path(__file__).parent.parent)
+    # three parents since nested in package form now
+    # need to find the root of the users. Is this correct or will this be different when someone imports it?
+    return str(Path(__file__).parent.parent.parent)
+
 
 def check_rng(seed):
     """Turn seed into a np.random.Generator instance

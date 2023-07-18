@@ -1,13 +1,23 @@
-# shift_kmeans demo
+# Bag of Waves
 
 This is a demo of the shift invariant k-means algorithm. Currently this is run on synthetic morlet data.
 
 By default, the morlet data and results from running sikmeans on it are included in the repo.
 
 If you'd like to run this on data of your own, create a subdirectory with the experiment name you'd like in both the data and results directories.
-The data needs to be in .npz format. Then, navigate to the scripts subdirectory in your terminal and run the following command:
+The data needs to be in .npz format. Then import the core API call from BOWaves.sikmeans.sikmeans_core as such:
 
-python run_sikmeans.py EXPERIMENT_NAME --root='root/directory'
+    from BOWaves.sikmeans.sikmeans_core import run
+    run('experiment_name', '/path/to/root/directory')
+
+Additionally, if you want to run the code on some sample synthetic Morlet signal data:
+
+    from BOWaves.sikmeans.sample_data_gen import generate_morlet_signal
+    generate_morlet_signal()
+
+If you've cloned the repo (use API when importing as package from pypi) and you'd like to still use the command line method to run the code, navigate to the scripts subdirectory in your terminal and run the following command:
+
+    python run_sikmeans.py EXPERIMENT_NAME --root='root/directory'
 
 There are other command line options available which you can find by checking run_sikmeans.py. 
 By default, the script will save an image of the centroids it finds within your data that have at least 5 occurrences or more. This is a hyperparameter.
