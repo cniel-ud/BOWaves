@@ -22,6 +22,10 @@ If you've cloned the repo (use API when importing as package from pypi) and you'
 There are other command line options available which you can find by checking run_sikmeans.py. 
 By default, the script will save an image of the centroids it finds within your data that have at least 5 occurrences or more. This is a hyperparameter.
 
+Note that if you are using the Bag-of-Waves feature extractor on EEG data, we currently assume that you have done some preprocessing
+in order to extract the independent components (ICs), which is what the code will operate on.
+This could be done with Matlab and EEGLAB, the MNE library in Python, etc.
+
 Please let me (Austin Meek) know if you have any questions.
 
 ## Install
