@@ -17,3 +17,23 @@ Where the functions housed in the current file come into play in the above pipel
 3. Dictionary and codebook creation files for BOWaves. Associated dataloaders
 """
 
+from scipy.io import loadmat
+from pathlib import Path
+
+def load_ics_from_matlab(root: Path, dataset_name: str):
+    """
+    This function loads ICs from the data folder and returns a numpy array with them.
+
+    # TODO - before writing any more of this, run the matlab code and see how its outputs are formatted
+
+    Parameters
+    ----------
+    root
+    dataset_name
+
+    Returns
+    -------
+    numpy array of ICs. Of shape (channel, time, # of ICs)
+    """
+
+    data_dir = root.joinpath('data', dataset_name)
