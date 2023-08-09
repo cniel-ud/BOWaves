@@ -46,3 +46,8 @@ Note: This repo is adapted from https://github.com/chmendoza/sikcsp. If you find
   pages={1136-1139},
   doi={10.1109/EMBC46164.2021.9629913}}
 ```
+
+## Further note
+
+If you clone the repo in the current state, you may notice many things are in the repo that are not in the package, such as matlab files.
+We are actively in the process of integrating MNE with our code to replace our older matlab data processing files.
