@@ -18,4 +18,5 @@ for i = 1:length(file_list)
     end
     EEG = iclabel(EEG);
     EEG = pop_saveset(EEG, 'savemode', 'resave');
+    fprintf('ICLabel applied and data saved for %s\n', file_list(i).name);
 end
