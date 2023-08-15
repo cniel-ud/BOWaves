@@ -25,7 +25,8 @@ function ds003004_download() {
         # Feel free to test the script with the below on your PC though, otherwise it'll download ~36 GB of data
         #pipenv run datalad install -s https://github.com/OpenNeuroDatasets/ds003004.git $data_dir/ds003004
 
-        # Deepcopies. Run on Caviness
+        # Deepcopies. Run on Caviness - nevermind. Datalad is hard to use on caviness,
+        # requires creating own VALET package. Just use the curl script
         pipenv run datalad get --copy https://github.com/OpenNeuroDatasets/ds003004.git $data_dir/ds003004
     fi
 }
