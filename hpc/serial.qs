@@ -17,4 +17,5 @@ source activate /work/cniel/ajmeek/BOWaves/venv/
 # Run bash / python script below
 ls ../matlab
 # matlab -nodisplay -nosplash -nodesktop -r "addpath('../matlab'); run(add_ICLabel); exit;"
-matlab -batch "addpath('../matlab'); add_ICLabel; exit;"
+# use -batch instead of -r now for scripts and non-interactive systems. Since matlab 2019
+matlab -batch "addpath('../matlab'); add_ICLabels; exit;"
