@@ -17,4 +17,4 @@ source activate /work/cniel/ajmeek/BOWaves/venv/
 # Run bash / python script below
 ls ../matlab
 # matlab -nodisplay -nosplash -nodesktop -r "addpath('../matlab'); run(add_ICLabel); exit;"
-matlab -r "addpath('../matlab'); run(add_ICLabel); exit;"
+matlab -r "addpath('../matlab'); add_ICLabel; exit;"
