@@ -11,6 +11,7 @@
 #export UD_JOB_EXIT_FN_SIGNALS="SIGTERM EXIT"
 
 vpkg_devrequire intel-python/2022u1:python3
+vpkg_devrequire matlab
 source activate /work/cniel/ajmeek/BOWaves/venv/
 
 # Run bash / python script below
