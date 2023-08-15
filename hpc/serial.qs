@@ -15,4 +15,5 @@ vpkg_devrequire matlab
 source activate /work/cniel/ajmeek/BOWaves/venv/
 
 # Run bash / python script below
-matlab -r "run(add_ICLabels.m); exit;"
+ls ../matlab
+matlab -nodisplay -nosplash -nodesktop -r "addpath('../matlab'); run(add_ICL); exi exit;"
