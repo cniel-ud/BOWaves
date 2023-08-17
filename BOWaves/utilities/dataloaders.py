@@ -13,7 +13,7 @@ Current pipeline:
 4. Features from BOWaves can then be used for classification - clustering for dictionary learning.
 
 Where the functions housed in the current file come into play in the above pipeline:
-2. Load ICs, load from matlab file outputs using sklearn, use sklearn for train test split
+2. Load ICs, load from matlab file outputs using scipy, use sklearn for train test split
 3. Dictionary and codebook creation files for BOWaves. Associated dataloaders
 """
 
@@ -42,7 +42,23 @@ def load_ics_from_matlab(root: Path, dataset_name: str):
     data_dir = root.joinpath('data', dataset_name)
 
 
-def load_and_visualize_mat_file_frolich(file_path):
+def load_and_visualize_mat_file_frolich(file_path, visualize=False):
+    """
+    This takes in the preprocessed data from Frolich et. al
+    W is the demixing matrix from ICA, X is the array of ICs
+    Classes and labels are in nested arrays, which explains the weird and complicated indexing below.
+    Check the data array in the debugger if you want more details.
+    Parameters
+    ----------
+    file_path: path to the .mat file containing the data
+
+    visualize: Boolean, whether or not to use matplotlib to visualize the data and save it to /img subdirectory
+
+    Returns
+    -------
+    Y - a matrix of ICs. Shape is (channels, samples)
+        For the Frolich data, there are around 2 mil samples, at 500 hz sampling rate
+    """
     # Create 'img' subdirectory if it doesn't exist
     img_dir = os.path.join(os.path.dirname(file_path), 'img')
     os.makedirs(img_dir, exist_ok=True)
@@ -59,39 +75,46 @@ def load_and_visualize_mat_file_frolich(file_path):
             #     print(value)
 
     # Visualize EEG time series data
-    for key, value in data.items():
-        if isinstance(value, np.ndarray) and value.dtype in (np.float32, np.float64, np.int32, np.int64):
-            if value.ndim == 2:
-                num_channels, num_samples = value.shape
-                time = np.arange(num_samples)  # Assuming time starts from 0 and is evenly spaced
+    X = data['X'] #raw
+    W = data['W'] #demixing matrix
 
-                fig, axes = plt.subplots(num_channels, 1, figsize=(10, 3 * num_channels))
-                fig.suptitle(key)
+    Y = W @ X #combine here to get the ICs
 
-                for channel in range(num_channels):
-                    axes[channel].plot(time, value[channel])
-                    #axes[channel].set_ylabel(f'Channel {channel + 1}')
-                    if not (key == "X" and channel == 63):
-                        print(channel)
-                        axes[channel].set_ylabel(f'Channel {channel} \n Label {data["classes"][0][data["labels"][channel] - 1][0][0]}')
+    # this is the Cue dataset from Frolich, not the Emotion one. 500 Hz
+    #train classifier on emotion, test on Cue. need to change sampling rate in between
 
-                axes[-1].set_xlabel('Time')
-                plt.subplots_adjust(hspace=0.5)  # Adjust vertical spacing between subplots
+    # need different number of minutes per IC / window. Carlos' default params were 15, which is 27 mil
+    # time points. We've only got 2 mil. Change that param based on what Frolich uses and also keep in mind
+    # what ICLabel uses.
 
-                # Save the plot to the 'img' subdirectory
-                plot_filename = os.path.join(img_dir, f"{key}_plot.png")
-                plt.savefig(plot_filename)
-                plt.close()
+    if visualize:
+        num_channels, num_samples = Y.shape
+        time = np.arange(num_samples)  # Assuming time starts from 0 and is evenly spaced
 
-            else:
-                print(f"Skipped visualization for {key} due to unsupported shape.")
+        fig, axes = plt.subplots(num_channels, 1, figsize=(10, 3 * num_channels))
+        fig.suptitle('Independent Components')
 
-    plt.show()
+        for channel in range(num_channels):
+            axes[channel].plot(time // 8000 , Y[channel, time // 8000]) #get 250 samples from 2 mil
+            #axes[channel].set_ylabel(f'Channel {channel + 1}')
+            #if not (key == "X" and channel == 63):
+            #print(channel)
+            axes[channel].set_ylabel(f'Channel {channel} \n Label {data["classes"][0][data["labels"][channel] - 1][0][0]}')
 
-    #print(data['classes'][0][0])
+        axes[-1].set_xlabel('Time')
+        plt.subplots_adjust(hspace=0.5)  # Adjust vertical spacing between subplots
 
-    for count, i in enumerate(data['labels']):
-        print(f"IC #{count} is label {data['classes'][0][i-1][0][0]}")
+        # Save the plot to the 'img' subdirectory
+        plot_filename = os.path.join(img_dir, f"Y_plot.png")
+        plt.savefig(plot_filename)
+        plt.close()
+
+        plt.show()
+
+    # for count, i in enumerate(data['labels']):
+    #     print(f"IC #{count} is label {data['classes'][0][i-1][0][0]}")
+
+    return Y
 
 # Replace 'your_file.mat' with the actual file path
-load_and_visualize_mat_file_frolich('../../data/frolich/frolich_extract_01.mat')
+Y = load_and_visualize_mat_file_frolich('../../data/frolich/frolich_extract_01.mat')
