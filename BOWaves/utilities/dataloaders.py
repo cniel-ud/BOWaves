@@ -95,7 +95,7 @@ def load_and_visualize_mat_file_frolich(file_path, visualize=False):
         fig.suptitle('Independent Components')
 
         for channel in range(num_channels):
-            axes[channel].plot(time // 8000 , Y[channel, time // 8000]) #get 250 samples from 2 mil
+            axes[channel].plot(time // 800 , Y[channel, time // 800]) #get 2500 samples from 2 mil
             #axes[channel].set_ylabel(f'Channel {channel + 1}')
             #if not (key == "X" and channel == 63):
             #print(channel)
@@ -117,4 +117,5 @@ def load_and_visualize_mat_file_frolich(file_path, visualize=False):
     return Y
 
 # Replace 'your_file.mat' with the actual file path
-Y = load_and_visualize_mat_file_frolich('../../data/frolich/frolich_extract_01.mat')
+Y = load_and_visualize_mat_file_frolich('../../data/frolich/frolich_extract_01.mat', visualize=True)
+
