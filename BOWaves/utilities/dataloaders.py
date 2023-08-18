@@ -67,12 +67,12 @@ def load_and_visualize_mat_file_frolich(file_path, visualize=False):
     data = loadmat(file_path)
 
     # Display metadata
-    print("Metadata:")
-    for key, value in data.items():
-        if not key.startswith("__"):
-            print(f"{key}: {type(value)}")
-            # if isinstance(value, np.ndarray):
-            #     print(value)
+    # print("Metadata:")
+    # for key, value in data.items():
+    #     if not key.startswith("__"):
+    #         print(f"{key}: {type(value)}")
+    #         # if isinstance(value, np.ndarray):
+    #         #     print(value)
 
     # Visualize EEG time series data
     X = data['X'] #raw
@@ -111,11 +111,14 @@ def load_and_visualize_mat_file_frolich(file_path, visualize=False):
 
         plt.show()
 
-    # for count, i in enumerate(data['labels']):
-    #     print(f"IC #{count} is label {data['classes'][0][i-1][0][0]}")
+    labels_in_order = []
+    for count, i in enumerate(data['labels']):
+        # print(f"IC #{count} is label {data['classes'][0][i-1][0][0]}")
+        labels_in_order.append(data['classes'][0][i-1][0][0])
 
-    return Y
+    return Y, labels_in_order
 
 # Replace 'your_file.mat' with the actual file path
-Y = load_and_visualize_mat_file_frolich('../../data/frolich/frolich_extract_01.mat', visualize=True)
+#Y, labels = load_and_visualize_mat_file_frolich('../../data/frolich/frolich_extract_01.mat')#, visualize=True)
 
+#print()
