@@ -20,7 +20,7 @@ Where the functions housed in the current file come into play in the above pipel
 from scipy.io import loadmat
 from pathlib import Path
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import os
 
 def load_ics_from_matlab(root: Path, dataset_name: str):
@@ -87,29 +87,29 @@ def load_and_visualize_mat_file_frolich(file_path, visualize=False):
     # time points. We've only got 2 mil. Change that param based on what Frolich uses and also keep in mind
     # what ICLabel uses.
 
-    if visualize:
-        num_channels, num_samples = Y.shape
-        time = np.arange(num_samples)  # Assuming time starts from 0 and is evenly spaced
-
-        fig, axes = plt.subplots(num_channels, 1, figsize=(10, 3 * num_channels))
-        fig.suptitle('Independent Components')
-
-        for channel in range(num_channels):
-            axes[channel].plot(time // 800 , Y[channel, time // 800]) #get 2500 samples from 2 mil
-            #axes[channel].set_ylabel(f'Channel {channel + 1}')
-            #if not (key == "X" and channel == 63):
-            #print(channel)
-            axes[channel].set_ylabel(f'Channel {channel} \n Label {data["classes"][0][data["labels"][channel] - 1][0][0]}')
-
-        axes[-1].set_xlabel('Time')
-        plt.subplots_adjust(hspace=0.5)  # Adjust vertical spacing between subplots
-
-        # Save the plot to the 'img' subdirectory
-        plot_filename = os.path.join(img_dir, f"Y_plot.png")
-        plt.savefig(plot_filename)
-        plt.close()
-
-        plt.show()
+    # if visualize:
+    #     num_channels, num_samples = Y.shape
+    #     time = np.arange(num_samples)  # Assuming time starts from 0 and is evenly spaced
+    #
+    #     fig, axes = plt.subplots(num_channels, 1, figsize=(10, 3 * num_channels))
+    #     fig.suptitle('Independent Components')
+    #
+    #     for channel in range(num_channels):
+    #         axes[channel].plot(time // 800 , Y[channel, time // 800]) #get 2500 samples from 2 mil
+    #         #axes[channel].set_ylabel(f'Channel {channel + 1}')
+    #         #if not (key == "X" and channel == 63):
+    #         #print(channel)
+    #         axes[channel].set_ylabel(f'Channel {channel} \n Label {data["classes"][0][data["labels"][channel] - 1][0][0]}')
+    #
+    #     axes[-1].set_xlabel('Time')
+    #     plt.subplots_adjust(hspace=0.5)  # Adjust vertical spacing between subplots
+    #
+    #     # Save the plot to the 'img' subdirectory
+    #     plot_filename = os.path.join(img_dir, f"Y_plot.png")
+    #     plt.savefig(plot_filename)
+    #     plt.close()
+    #
+    #     plt.show()
 
     labels_in_order = []
     for count, i in enumerate(data['labels']):
