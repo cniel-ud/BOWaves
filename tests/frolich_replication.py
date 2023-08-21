@@ -49,7 +49,7 @@ os.makedirs(output_directory, exist_ok=True)
 date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # Define the output file path
-output_file_path = os.path.join(output_directory, f"results_{date}.txt")
+output_file_path = os.path.join(output_directory, f'results_{date}.txt')
 
 # Outer Leave-One-Out (LOO) cross-validation
 outer_cv = LeaveOneOut()
@@ -86,14 +86,14 @@ with open(output_file_path, "w") as output_file:
         outer_scores.append(score)
 
         # Write results to the output file
-        output_file.write(f"Test Index: {test_index}\n")
-        output_file.write(f"Best Hyperparameters: {best_params}\n")
-        output_file.write(f"Model Score: {score}\n")
-        output_file.write("-" * 40 + "\n")
+        output_file.write(f'Test Index: {test_index}\n')
+        output_file.write(f'Best Hyperparameters: {best_params}\n')
+        output_file.write(f'Model Score: {score}\n')
+        output_file.write('-' * 40 + '\n')
 
 # Calculate the average performance over all outer folds
 average_score = np.mean(outer_scores)
 with open(output_file_path, "a") as output_file:
-    output_file.write(f"Average Accuracy: {average_score}\n")
+    output_file.write(f'Average Accuracy: {average_score}\n')
 
 #run this on Caviness, it won't run on my laptop
