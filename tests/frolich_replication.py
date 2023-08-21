@@ -13,7 +13,10 @@ import datetime
 #pyrootutils so that Caviness can find BOWaves module correctly
 import pyrootutils
 
-pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves')
+#pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves')
+path = pyrootutils.find_root(search_from=__file__, indicator=".git")
+
+pyrootutils.set_root(path=path, pythonpath=True)
 
 import BOWaves.utilities.dataloaders as dataloaders
 
