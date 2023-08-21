@@ -34,6 +34,8 @@ frolich_data = os.listdir('../data/frolich')
 #filter out subdirectories such as /img
 frolich_data = [file for file in frolich_data if not os.path.isdir(file)]
 
+print(frolich_data)
+
 for file in frolich_data:
     ICs, labels = dataloaders.load_and_visualize_mat_file_frolich('../data/frolich/' + file, visualize=False)
     frolich_ics['ICs'].append(ICs)
@@ -109,3 +111,11 @@ with open(output_file_path, "a") as output_file:
     output_file.write(f'Average Accuracy: {average_score}\n')
 
 #run this on Caviness, it won't run on my laptop
+#it gets autokilled on Caviness too. unsure why. maybe it's too much memory?
+#may not be able to hold all ICs in memory. May have to store and load them in batches.
+
+#Test this though. Reserve a big gpu on Caviness and run it there. See if it works.
+#If it works that way, then I know it's the memory.
+
+#Specifying --mem=8G worked. But it still didn't write anything out.
+#with 8G, it got an OOM memory error and killed. Trying with 16G.
