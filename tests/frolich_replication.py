@@ -10,11 +10,18 @@ from sklearn.linear_model import LogisticRegression  # Multinomial Logistic Regr
 import numpy as np
 import datetime
 
+#pyrootutils so that Caviness can find BOWaves module correctly
+import pyrootutils
+
+pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves')
+
 import BOWaves.utilities.dataloaders as dataloaders
 
 #load all the ICs and labels
 
 #create a data structure containing the ICs and labels
+
+print("Running line 19")
 
 frolich_ics = {'ICs': [], 'labels': []}
 
