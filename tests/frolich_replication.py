@@ -120,3 +120,13 @@ with open(output_file_path, "a") as output_file:
 #Specifying --mem=8G worked. But it still didn't write anything out.
 #with 8G, it got an OOM memory error and killed. Trying with 16G.
 #increased to 32G.
+
+#alright, finally getting to some actual errors. For some reason, Caviness can't check if something is a directory.
+"""
+So removed all subdirectories in the img directory, like /img.
+
+Also found that it requires 32 G of VRAM to hold all the ICs in memory. This is on the smaller dataset too. Batching to come.
+
+Now it's getting an error on the axis concatenations. Try commenting out the concatenations and seeing if that matters.
+Do it tomorrow.
+"""
