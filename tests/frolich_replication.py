@@ -55,6 +55,8 @@ output_file_path = os.path.join(output_directory, f'results_{date}.txt')
 outer_cv = LeaveOneOut()
 outer_scores = []
 
+print("RUNNING")
+
 with open(output_file_path, "w") as output_file:
     for train_index, test_index in outer_cv.split(X):
         X_train, X_test = X[train_index], X[test_index]
