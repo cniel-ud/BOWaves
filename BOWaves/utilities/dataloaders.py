@@ -60,8 +60,8 @@ def load_and_visualize_mat_file_frolich(file_path, visualize=False):
         For the Frolich data, there are around 2 mil samples, at 500 hz sampling rate
     """
     # Create 'img' subdirectory if it doesn't exist
-    img_dir = os.path.join(os.path.dirname(file_path), 'img')
-    os.makedirs(img_dir, exist_ok=True)
+    #img_dir = os.path.join(os.path.dirname(file_path), 'img')
+    #os.makedirs(img_dir, exist_ok=True)
 
     # Load .mat file
     data = loadmat(file_path)

@@ -119,3 +119,4 @@ with open(output_file_path, "a") as output_file:
 
 #Specifying --mem=8G worked. But it still didn't write anything out.
 #with 8G, it got an OOM memory error and killed. Trying with 16G.
+#increased to 32G.
