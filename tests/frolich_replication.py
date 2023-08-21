@@ -77,7 +77,7 @@ with open(output_file_path, "w") as output_file:
         # Get the best hyperparameters from inner CV
         best_params = inner_search.best_params_
 
-        # Train the model with best hyperparameters on the entire training set
+        # Train the model with the best hyperparameters on the entire training set
         model = LogisticRegression(multi_class="multinomial", **best_params)
         model.fit(X_train, y_train)
 
