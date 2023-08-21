@@ -41,12 +41,12 @@ y = np.concatenate(y, axis=1)
 print(X, y)
 
 # Define the directory for output
-output_directory = "../data/frolich/results"
+output_directory = '../data/frolich/results'
 
 # Create the output directory if it doesn't exist
 os.makedirs(output_directory, exist_ok=True)
 
-date = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+date = datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
 # Define the output file path
 output_file_path = os.path.join(output_directory, f'results_{date}.txt')
