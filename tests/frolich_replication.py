@@ -38,8 +38,8 @@ print(frolich_data)
 
 for file in frolich_data:
     ICs, labels = dataloaders.load_and_visualize_mat_file_frolich('../data/frolich/' + file, visualize=False)
-    frolich_ics['ICs'].append(ICs)
-    frolich_ics['labels'].append(labels)
+    frolich_ics['ICs'].extend(ICs)
+    frolich_ics['labels'].extend(labels)
 
 #now we have a data structure containing all the ICs and labels
 
