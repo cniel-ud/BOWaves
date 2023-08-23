@@ -54,7 +54,7 @@ print("Shape of X, y: ", np.array(X).shape, np.array(y).shape)
 print(X, y)
 
 # Define the directory for output
-output_directory = '../data/frolich/results'
+output_directory = '../data/results/frolich'
 
 # Create the output directory if it doesn't exist
 os.makedirs(output_directory, exist_ok=True)
