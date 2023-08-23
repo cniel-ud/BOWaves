@@ -137,4 +137,10 @@ Also found that it requires 32 G of VRAM to hold all the ICs in memory. This is 
 
 Now it's getting an error on the axis concatenations. Try commenting out the concatenations and seeing if that matters.
 Do it tomorrow.
+
+8/23 Frolich et. al use sets of features rather than just feeding the whole time series to the model, which was
+what I was naively trying to do. They find features from the inner loop of the nest CV. How should I define the feature
+set to choose from? Reading their paper more closely now.
+
+This was a slight misunderstanding. Rework this file.
 """
