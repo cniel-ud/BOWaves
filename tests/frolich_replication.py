@@ -26,7 +26,7 @@ import BOWaves.utilities.dataloaders as dataloaders
 
 print("Running line 19")
 
-frolich_ics = {'ICs': [], 'labels': []}
+frolich_ics = {'ICs': np.array([]), 'labels': np.array([])}
 
 #for file in directory frolich data
 frolich_data = os.listdir('../data/frolich')
@@ -38,8 +38,10 @@ print(frolich_data)
 
 for file in frolich_data:
     ICs, labels = dataloaders.load_and_visualize_mat_file_frolich('../data/frolich/' + file, visualize=False)
-    frolich_ics['ICs'].extend(ICs)
-    frolich_ics['labels'].extend(labels)
+    # frolich_ics['ICs'].extend(ICs)
+    # frolich_ics['labels'].extend(labels)
+    frolich_ics['ICs'] = np.vstack((frolich_ics['ICs'], ICs))
+    frolich_ics['labels'] = np.vstack((frolich_ics['labels'], labels))
 
 #now we have a data structure containing all the ICs and labels
 
@@ -50,7 +52,7 @@ X, y = frolich_ics['ICs'], frolich_ics['labels']  # Your data and labels
 #X = np.concatenate(X, axis=1)
 #y = np.concatenate(y, axis=1)
 
-print("Shape of X, y: ", np.array(X, dtype=object).shape, np.array(y, dtype=object).shape)
+print("Shape of X, y: ", X.shape, y.shape)#np.array(X, dtype=object).shape, np.array(y, dtype=object).shape)
 print(X, y)
 
 # Define the directory for output
