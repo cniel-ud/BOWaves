@@ -47,8 +47,8 @@ for file in frolich_data:
 X, y = frolich_ics['ICs'], frolich_ics['labels']  # Your data and labels
 
 # want to classify ICs, not subjects. So arrange it so that X is all ICs, and y is all the labels, concatenated
-X = np.concatenate(X, axis=1)
-y = np.concatenate(y, axis=1)
+#X = np.concatenate(X, axis=1)
+#y = np.concatenate(y, axis=1)
 
 print(X, y)
 
