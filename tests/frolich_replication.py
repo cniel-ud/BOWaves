@@ -50,6 +50,7 @@ X, y = frolich_ics['ICs'], frolich_ics['labels']  # Your data and labels
 #X = np.concatenate(X, axis=1)
 #y = np.concatenate(y, axis=1)
 
+print("Shape of X, y: ", np.array(X).shape, np.array(y).shape)
 print(X, y)
 
 # Define the directory for output
