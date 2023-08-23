@@ -36,12 +36,17 @@ frolich_data = [file for file in frolich_data if not os.path.isdir(file)]
 
 print(frolich_data)
 
+stacked_ICs = None
+stacked_labels = None
+
 for file in frolich_data:
     ICs, labels = dataloaders.load_and_visualize_mat_file_frolich('../data/frolich/' + file, visualize=False)
     # frolich_ics['ICs'].extend(ICs)
-    # frolich_ics['labels'].extend(labels)
-    frolich_ics['ICs'] = np.vstack((frolich_ics['ICs'], ICs))
-    frolich_ics['labels'] = np.vstack((frolich_ics['labels'], labels))
+    # # frolich_ics['labels'].extend(labels)
+    # frolich_ics['ICs'] = np.vstack((frolich_ics['ICs'], ICs))
+    # frolich_ics['labels'] = np.vstack((frolich_ics['labels'], labels))
+    stacked_ICs = np.vstack((stacked_ICs, ICs)) if stacked_ICs is not None else ICs
+    stacked_labels = np.vstack((stacked_labels, labels)) if stacked_labels is not None else labels
 
 #now we have a data structure containing all the ICs and labels
 
