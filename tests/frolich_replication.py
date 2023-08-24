@@ -41,6 +41,7 @@ stacked_labels = None
 
 for file in frolich_data:
     ICs, labels = dataloaders.load_and_visualize_mat_file_frolich('../data/frolich/' + file, visualize=False)
+    print("labels: ", labels)
     # frolich_ics['ICs'].extend(ICs)
     # # frolich_ics['labels'].extend(labels)
     # frolich_ics['ICs'] = np.vstack((frolich_ics['ICs'], ICs))
