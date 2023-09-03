@@ -159,6 +159,8 @@ for label in all_classes:
             X[win_start:win_start+windows_per_ic] = ic[time_idx]
             win_start += windows_per_ic
 
+    if label['name'] == 'neural':
+        windows_per_class['neural'] = X
     windows_per_class[label['name']] = X
     print("type of first element at every iteration: \t", type(windows_per_class['neural']))
     print(label['name'] + ': ' + str(type(windows_per_class[label['name']])))
