@@ -169,6 +169,10 @@ n_runs = 3
 n_jobs = 1
 rng = 42#np.random.RandomState(42)
 
+#error checking of type in windows per class
+for label in windows_per_class:
+    print(label + ': ' + str(type(windows_per_class[label])))
+
 #need to do this per class.
 neural['centroids'], neural['labels'], neural['shifts'], neural['distances'], neural['inertia'], _ = \
     shift_invariant_k_means(windows_per_class['neural'], num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
