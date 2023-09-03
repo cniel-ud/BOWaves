@@ -75,12 +75,12 @@ if len(X_train) != len(y_train):
 
 
 # Forgot what the classes were. check on Caviness
-neural = {'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
-blink = {'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
-muscle = {'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
-mixed = {'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
-lateyes = {'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
-heart = {'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+neural = {'name': 'neural', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+blink = {'name': 'blink', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+muscle = {'name': 'muscle', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+mixed = {'name': 'mixed', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+lateyes = {'name': 'lateyes', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+heart = {'name': 'heart', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
 
 all_classes = [neural, blink, muscle, mixed, lateyes, heart]
 
@@ -159,7 +159,7 @@ for label in all_classes:
             X[win_start:win_start+windows_per_ic] = ic[time_idx]
             win_start += windows_per_ic
 
-    windows_per_class[label] = X
+    windows_per_class[label['name']] = X
 
 from BOWaves.sikmeans.sikmeans_core import shift_invariant_k_means
 metric, init = 'cosine', 'random'
