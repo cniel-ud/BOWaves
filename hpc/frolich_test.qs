@@ -13,6 +13,7 @@
 
 vpkg_devrequire intel-python/2022u1:python3
 source activate /work/cniel/ajmeek/BOWaves/venv/
+pip install seaborn
 
 # Run bash / python script below
 
