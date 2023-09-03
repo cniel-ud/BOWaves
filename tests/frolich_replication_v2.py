@@ -134,21 +134,27 @@ for label in all_classes:
             time_idx = rng.choice(time_idx, size=windows_per_ic, replace=False)
             time_idx = time_idx[:, None] + np.arange(window_len)[None, :]
 
-            #print all relevant info up to this point for debugging
-            print("----------------------------------")
-            print('ic: ' + str(ic))
-            print('windows_per_ic: ' + str(windows_per_ic))
-            print('time_idx: ' + str(time_idx))
-            print('win_start: ' + str(win_start))
-            print('win_start + windows_per_ic: ' + str(win_start + windows_per_ic))
-            #print('ic[time_idx]: ' + str(ic[time_idx]))
-            #print('X[win_start:win_start+windows_per_ic]: ' + str(X[win_start:win_start+windows_per_ic]))
-            print('ic[time_idx].shape: ' + str(ic[time_idx].shape))
-            print('X[win_start:win_start+windows_per_ic].shape: ' + str(X[win_start:win_start+windows_per_ic].shape))
-            print('X.shape: ' + str(X.shape))
-            print('ic.shape: ' + str(ic.shape))
+            # #print all relevant info up to this point for debugging
+            # print("----------------------------------")
+            # #print('ic: ' + str(ic))
+            # print('windows_per_ic: ' + str(windows_per_ic))
+            # #print('time_idx: ' + str(time_idx))
+            # print('win_start: ' + str(win_start))
+            # print('win_start + windows_per_ic: ' + str(win_start + windows_per_ic))
+            # #print('ic[time_idx]: ' + str(ic[time_idx]))
+            # #print('X[win_start:win_start+windows_per_ic]: ' + str(X[win_start:win_start+windows_per_ic]))
+            # print('ic[time_idx].shape: ' + str(ic[time_idx].shape))
+            # print('X[win_start:win_start+windows_per_ic].shape: ' + str(X[win_start:win_start+windows_per_ic].shape))
+            # print('X.shape: ' + str(X.shape))
+            # print('ic.shape: ' + str(ic.shape))
 
-            #since number of windows
+            #There seems to be an off by one error here.
+            #The very last IC goes past the total num of windows in X.
+            #Not sure if it's off by one, since the first portion of X is filled. Perhaps it's about how I calc
+            # the total num of ICs? - don't think so. So cut off at the last time.
+
+            if(win_start == tot_num_windows):
+                break
 
             X[win_start:win_start+windows_per_ic] = ic[time_idx]
             win_start += windows_per_ic
