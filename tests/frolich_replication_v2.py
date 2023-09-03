@@ -1,5 +1,3 @@
-from copy import deepcopy
-
 import pyrootutils
 import os
 import numpy as np
@@ -161,7 +159,8 @@ for label in all_classes:
             X[win_start:win_start+windows_per_ic] = ic[time_idx]
             win_start += windows_per_ic
 
-    windows_per_class[label['name']] = deepcopy(X)
+    windows_per_class[label['name']] = X
+    print(label + ': ' + str(type(windows_per_class[label])))
 
 from BOWaves.sikmeans.sikmeans_core import shift_invariant_k_means
 metric, init = 'cosine', 'random'
@@ -172,6 +171,7 @@ n_jobs = 1
 rng = 42#np.random.RandomState(42)
 
 #error checking of type in windows per class
+print("after training codebooks")
 for label in windows_per_class:
     print(label + ': ' + str(type(windows_per_class[label])))
 
