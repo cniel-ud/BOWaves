@@ -160,7 +160,8 @@ for label in all_classes:
             win_start += windows_per_ic
 
     windows_per_class[label['name']] = X
-    print(label['name'] + ': ' + str(type(windows_per_class[label])))
+    print(label['name'] + ': ' + str(type(windows_per_class[label['name']])))
+    print("type of X: ", type(X))
 
 from BOWaves.sikmeans.sikmeans_core import shift_invariant_k_means
 metric, init = 'cosine', 'random'
