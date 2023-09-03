@@ -68,6 +68,7 @@ for file in frolich_data:
     frolich_ics['ICs'].extend(ICs)
     frolich_ics['labels'].extend(labels)
 
+# TODO - think about this split. Should we really hold this out for codebooks?
 X_train, X_test, y_train, y_test = train_test_split(frolich_ics['ICs'], frolich_ics['labels'], test_size=0.2, random_state=42)
 
 if len(X_train) != len(y_train):
