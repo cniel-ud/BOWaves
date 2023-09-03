@@ -1,10 +1,7 @@
 import pyrootutils
-import BOWaves.utilities.dataloaders as dataloaders
 import os
 import numpy as np
 from sklearn.model_selection import train_test_split
-from BOWaves.sikmeans.sikmeans_core import shift_invariant_k_means
-from BOWaves.sikmeans.sikmeans_core import _assignment_step
 from sklearn.model_selection import LeaveOneOut, GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
@@ -16,6 +13,10 @@ from sklearn.metrics import confusion_matrix
 import seaborn as sns
 
 pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
+
+import BOWaves.utilities.dataloaders as dataloaders
+from BOWaves.sikmeans.sikmeans_core import shift_invariant_k_means, _assignment_step
+
 
 def bag_of_waves(raw_ics, codebooks):
     """
