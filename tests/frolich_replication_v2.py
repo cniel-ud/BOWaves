@@ -17,7 +17,7 @@ pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
 import BOWaves.utilities.dataloaders as dataloaders
 from BOWaves.sikmeans.sikmeans_core import shift_invariant_k_means, _assignment_step
 
-print("Error check - Caviness jobs don't seem to be running")
+print("Error check - Caviness jobs don't seem to be running") #it's not. will try working on this again later.
 
 def bag_of_waves(raw_ics, codebooks):
     """
