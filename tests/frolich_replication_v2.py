@@ -93,6 +93,7 @@ for file in frolich_data:
         subject = [int(match.group()) for match in re.finditer(pattern, file)][0]
         frolich_ics_by_subject[subject-1]['ICs'].extend(ICs)
         frolich_ics_by_subject[subject-1]['labels'].extend(labels)
+        print("subject: ", subject)
 
 
 
@@ -100,6 +101,15 @@ for file in frolich_data:
 #X_train, X_test, y_train, y_test = train_test_split(frolich_ics['ICs'], frolich_ics['labels'], test_size=0.2, random_state=42)
 X_train, y_train = frolich_ics_by_subject[0:10]['ICs'], frolich_ics_by_subject[0:10]['labels']
 X_test, y_test = frolich_ics_by_subject[10:12]['ICs'], frolich_ics_by_subject[10:12]['labels']
+
+print("list: ", list(frolich_ics_by_subject.keys())[:10])
+selected_dataframes = [frolich_ics_by_subject[key] for key in list(frolich_ics_by_subject.keys())[:10]]
+X_train = np.concatenate([df['ICs'] for df in selected_dataframes])
+y_train = np.concatenate([df['labels'] for df in selected_dataframes])
+
+selected_dataframes = [frolich_ics_by_subject[key] for key in list(frolich_ics_by_subject.keys())[10:12]]
+X_test = np.concatenate([df['ICs'] for df in selected_dataframes])
+y_test = np.concatenate([df['labels'] for df in selected_dataframes])
 
 if len(X_train) != len(y_train):
     raise ValueError('X_train and y_train are not the same length.')
