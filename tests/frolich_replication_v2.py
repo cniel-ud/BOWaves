@@ -99,8 +99,8 @@ for file in frolich_data:
 
 # TODO - switch to held out by subject. includes modifying the above code to load the data by subject.
 #X_train, X_test, y_train, y_test = train_test_split(frolich_ics['ICs'], frolich_ics['labels'], test_size=0.2, random_state=42)
-X_train, y_train = frolich_ics_by_subject[0:10]['ICs'], frolich_ics_by_subject[0:10]['labels']
-X_test, y_test = frolich_ics_by_subject[10:12]['ICs'], frolich_ics_by_subject[10:12]['labels']
+#X_train, y_train = frolich_ics_by_subject[0:10]['ICs'], frolich_ics_by_subject[0:10]['labels']
+#X_test, y_test = frolich_ics_by_subject[10:12]['ICs'], frolich_ics_by_subject[10:12]['labels']
 
 print("list: ", list(frolich_ics_by_subject.keys())[:10])
 selected_dataframes = [frolich_ics_by_subject[key] for key in list(frolich_ics_by_subject.keys())[:10]]
