@@ -11,6 +11,7 @@ import joblib, datetime
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
+import re
 
 pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
 
@@ -55,8 +56,24 @@ def bag_of_waves(raw_ics, codebooks):
             X[ic, i_feature] = counts
     return X
 
+def train_and_store_codebooks():
+    """
+    This calculates a codebook for each class, per subject. These are then stored in separate files.
+
+    We want to store by subject and codebook so that we can train on specific subjects and test using codebooks from
+    specific held out subjects. This way we avoid contamination for LOO.
+
+    Files saved in data/frolich/codebooks. Other params etc are not necessary currently.
+    Returns
+    -------
+
+    """
+
+
+
 #frolich_ics = {'ICs': np.array([]), 'labels': np.array([])}
 frolich_ics = {'ICs': [], 'labels': []}
+frolich_ics_by_subject = [{'subject': f'{i+1:02}', 'ICs': [], 'labels': []} for i in range(12)]
 
 #for file in directory frolich data
 frolich_data = os.listdir('../data/frolich')
@@ -64,13 +81,25 @@ frolich_data = os.listdir('../data/frolich')
 #filter out subdirectories such as /img
 frolich_data = [file for file in frolich_data if not os.path.isdir(file)]
 
+#for regex
+pattern = r'\d+'
+
 for file in frolich_data:
     ICs, labels = dataloaders.load_and_visualize_mat_file_frolich('../data/frolich/' + file, visualize=False)
     frolich_ics['ICs'].extend(ICs)
     frolich_ics['labels'].extend(labels)
 
-# TODO - think about this split. Should we really hold this out for codebooks?
-X_train, X_test, y_train, y_test = train_test_split(frolich_ics['ICs'], frolich_ics['labels'], test_size=0.2, random_state=42)
+    if [int(match.group()) for match in re.finditer(pattern, file)]:
+        subject = [int(match.group()) for match in re.finditer(pattern, file)][0]
+        frolich_ics_by_subject[subject-1]['ICs'].extend(ICs)
+        frolich_ics_by_subject[subject-1]['labels'].extend(labels)
+
+
+
+# TODO - switch to held out by subject. includes modifying the above code to load the data by subject.
+#X_train, X_test, y_train, y_test = train_test_split(frolich_ics['ICs'], frolich_ics['labels'], test_size=0.2, random_state=42)
+X_train, y_train = frolich_ics_by_subject[0:10]['ICs'], frolich_ics_by_subject[0:10]['labels']
+X_test, y_test = frolich_ics_by_subject[10:12]['ICs'], frolich_ics_by_subject[10:12]['labels']
 
 if len(X_train) != len(y_train):
     raise ValueError('X_train and y_train are not the same length.')
