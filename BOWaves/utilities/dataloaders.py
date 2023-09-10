@@ -42,7 +42,7 @@ def load_ics_from_matlab(root: Path, dataset_name: str):
     data_dir = root.joinpath('data', dataset_name)
 
 
-def load_and_visualize_mat_file_frolich(file_path, visualize=False):
+def load_and_visualize_mat_file_frolich(file_path, up_to=None, visualize=False):
     """
     This takes in the preprocessed data from Frolich et. al
     W is the demixing matrix from ICA, X is the array of ICs
@@ -53,6 +53,8 @@ def load_and_visualize_mat_file_frolich(file_path, visualize=False):
     file_path: path to the .mat file containing the data
 
     visualize: Boolean, whether or not to use matplotlib to visualize the data and save it to /img subdirectory
+
+    up_to: int, number of ICs to load. If None, load all ICs. For testing, can load smaller subset.
 
     Returns
     -------

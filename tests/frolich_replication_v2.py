@@ -69,6 +69,7 @@ def train_and_store_codebooks():
 
     """
 
+#test codebooks with 8 train ICs and 2 test ICs
 
 
 #frolich_ics = {'ICs': np.array([]), 'labels': np.array([])}
@@ -102,14 +103,16 @@ for file in frolich_data:
 #X_train, y_train = frolich_ics_by_subject[0:10]['ICs'], frolich_ics_by_subject[0:10]['labels']
 #X_test, y_test = frolich_ics_by_subject[10:12]['ICs'], frolich_ics_by_subject[10:12]['labels']
 
+X_train, X_test, y_train, y_test = [], [], [], []
+
 print("list: ", frolich_ics_by_subject[:10])
 selected_dataframes = [frolich_ics_by_subject[index] for index in range(10)]
-X_train = np.concatenate([df['ICs'] for df in selected_dataframes])
-y_train = np.concatenate([df['labels'] for df in selected_dataframes])
+X_train.extedn([df['ICs'] for df in selected_dataframes])
+y_train.extend([df['labels'] for df in selected_dataframes])
 
 selected_dataframes = [frolich_ics_by_subject[index] for index in [10, 11, 12]]
-X_test = np.concatenate([df['ICs'] for df in selected_dataframes])
-y_test = np.concatenate([df['labels'] for df in selected_dataframes])
+X_test.extend([df['ICs'] for df in selected_dataframes])
+y_test.extend([df['labels'] for df in selected_dataframes])
 
 if len(X_train) != len(y_train):
     raise ValueError('X_train and y_train are not the same length.')
