@@ -110,7 +110,7 @@ selected_dataframes = [frolich_ics_by_subject[index] for index in range(10)]
 X_train.extend([df['ICs'] for df in selected_dataframes])
 y_train.extend([df['labels'] for df in selected_dataframes])
 
-selected_dataframes = [frolich_ics_by_subject[index] for index in [10, 11, 12]]
+selected_dataframes = [frolich_ics_by_subject[index] for index in [10, 11]]
 X_test.extend([df['ICs'] for df in selected_dataframes])
 y_test.extend([df['labels'] for df in selected_dataframes])
 
