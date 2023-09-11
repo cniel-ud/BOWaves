@@ -204,12 +204,12 @@ X_train, X_test, y_train, y_test = [], [], [], []
 
 #print("list: ", frolich_ics_by_subject[:10])
 selected_dataframes = [frolich_ics_by_subject[index] for index in range(10)]
-X_train.extend(df['ICs'] for df in selected_dataframes)
-y_train.extend(df['labels'] for df in selected_dataframes)
+X_train.extend(df['ICs'][0] for df in selected_dataframes)
+y_train.extend(df['labels'][0] for df in selected_dataframes)
 
 selected_dataframes = [frolich_ics_by_subject[index] for index in [10, 11]]
-X_test.extend(df['ICs'] for df in selected_dataframes)
-y_test.extend(df['labels'] for df in selected_dataframes)
+X_test.extend(df['ICs'][0] for df in selected_dataframes)
+y_test.extend(df['labels'][0] for df in selected_dataframes)
 
 print(selected_dataframes[0]['labels'])
 print("y_train labels: ", y_train)
