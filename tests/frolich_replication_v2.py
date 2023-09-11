@@ -20,6 +20,9 @@ from BOWaves.sikmeans.sikmeans_core import shift_invariant_k_means, _assignment_
 
 print("Error check - Caviness jobs don't seem to be running") #it's not. will try working on this again later.
 
+#error check, print root directory
+#print("root directory: ", pyrootutils.find_root(search_from=__file__, indicator=".git"))
+
 def bag_of_waves(raw_ics, codebooks):
     """
     Creates a bag-of-words representation of the input data using the codebooks.
@@ -158,9 +161,11 @@ def train_and_store_codebooks(ICs, labels, train_or_test):
         print(label['name'] + ': ' + str(type(windows_per_class[label['name']])))
         print("type of X: ", type(X))
 
+    path = pyrootutils.find_root(search_from=__file__, indicator=".project-root")
+
     #now save the codebooks trained on all ICs from each class in the train data.
     for label in all_classes:
-        out_file = f'/data/frolich/codebooks/{train_or_test}_{label["name"]}.npz'
+        out_file = path / f'data/frolich/codebooks/{train_or_test}_{label["name"]}.npz'
         with open(out_file, 'wb') as f:
             np.savez(out_file, centroids=label['centroids'], labels=label['labels'],
                      shifts=label['shifts'], distances=label['distances'], inertia=label['inertia'])
