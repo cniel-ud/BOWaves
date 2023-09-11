@@ -211,6 +211,8 @@ selected_dataframes = [frolich_ics_by_subject[index] for index in [10, 11]]
 X_test.extend(df['ICs'] for df in selected_dataframes)
 y_test.extend(df['labels'] for df in selected_dataframes)
 
+print(selected_dataframes[0]['labels'])
+print("y_train labels: ", y_train)
 if len(X_train) != len(y_train) or len(X_test) != len(y_test):
     raise ValueError('X and y are not the same length.')
 
