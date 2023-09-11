@@ -161,7 +161,7 @@ def train_and_store_codebooks(ICs, labels, train_or_test):
         print(label['name'] + ': ' + str(type(windows_per_class[label['name']])))
         print("type of X: ", type(X))
 
-    path = pyrootutils.find_root(search_from=__file__, indicator=".project-root")
+    path = pyrootutils.find_root(search_from=__file__, indicator=".git")
 
     #now save the codebooks trained on all ICs from each class in the train data.
     for label in all_classes:
