@@ -161,7 +161,7 @@ def train_and_store_codebooks(ICs, labels, train_or_test):
     #now save the codebooks trained on all ICs from each class in the train data.
     for label in all_classes:
         out_file = f'../data/frolich/codebooks/{train_or_test}_{label["name"]}.npz'
-        with out_file.open('wb') as f:
+        with open(out_file, 'wb') as f:
             np.savez(out_file, centroids=label['centroids'], labels=label['labels'],
                      shifts=label['shifts'], distances=label['distances'], inertia=label['inertia'])
 
