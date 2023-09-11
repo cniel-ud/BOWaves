@@ -79,6 +79,7 @@ def train_and_store_codebooks(ICs, labels, train_or_test):
     all_classes = [neural, blink, muscle, mixed, lateyes, heart]
 
     for i in range(len(X_train)):
+        print(y_train[i])
         if y_train[i] == 'neural':
             neural['ICs'].append(X_train[i])
         elif y_train[i] == 'blink':
@@ -201,7 +202,7 @@ for file in frolich_data:
 
 X_train, X_test, y_train, y_test = [], [], [], []
 
-print("list: ", frolich_ics_by_subject[:10])
+#print("list: ", frolich_ics_by_subject[:10])
 selected_dataframes = [frolich_ics_by_subject[index] for index in range(10)]
 X_train.extend(df['ICs'] for df in selected_dataframes)
 y_train.extend(df['labels'] for df in selected_dataframes)
