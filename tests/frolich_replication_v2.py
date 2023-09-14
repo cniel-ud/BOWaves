@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
 import re
+import argparse
 
 pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
 
@@ -19,6 +20,11 @@ import BOWaves.utilities.dataloaders as dataloaders
 from BOWaves.sikmeans.sikmeans_core import shift_invariant_k_means, _assignment_step
 
 print("Error check - Caviness jobs don't seem to be running") #it's not. will try working on this again later.
+
+parser = argparse.ArgumentParser(description="Your script description here")
+
+parser.add_argument("--loo_subj", type=int, help="The subject to leave out for LOO cross validation.")
+args = parser.parse_args()
 
 #error check, print root directory
 #print("root directory: ", pyrootutils.find_root(search_from=__file__, indicator=".git"))
@@ -379,9 +385,12 @@ for file in frolich_data:
 # if len(X_train) != len(y_train) or len(X_test) != len(y_test):
 #     raise ValueError('X and y are not the same length.')
 
+loo_subj = args.loo_subj
+train_and_store_codebooks(frolich_ics_by_subject, loo_subj=loo_subj)
+
 #train codebooks by subject and class
-for i in range(12):
-    train_and_store_codebooks(frolich_ics_by_subject, loo_subj=i)
+# for i in range(12):
+#     train_and_store_codebooks(frolich_ics_by_subject, loo_subj=i)
 # train_and_store_codebooks(X_train, y_train, train_or_test='train')
 # train_and_store_codebooks(X_test, y_test, train_or_test='test')
 
