@@ -104,7 +104,7 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
         if subject['subject'] != loo_subj:
             print(subject['labels'])
 
-            if len(subject['ICs'] != len(subject['labels'])):
+            if len(subject['ICs']) != len(subject['labels']):
                 raise ValueError('ICs and labels are not the same length.')
 
             for i, label in enumerate(subject['labels']):
@@ -125,7 +125,7 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
         else:
             print(subject['labels'])
 
-            if len(subject['ICs'] != len(subject['labels'])):
+            if len(subject['ICs']) != len(subject['labels']):
                 raise ValueError('ICs and labels are not the same length.')
 
             for i, label in enumerate(subject['labels']):
@@ -145,7 +145,6 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
                     raise ValueError('Unknown class label: ' + label)
 
 
-    return
 
     window_len = 256  # what's the sampling rate again?
 
