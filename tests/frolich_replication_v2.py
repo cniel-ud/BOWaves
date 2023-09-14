@@ -364,25 +364,27 @@ for file in frolich_data:
 
 # TODO - modify below to do LOO by subject, calling train and store codebooks each time.
 
-X_train, X_test, y_train, y_test = [], [], [], []
-
-#print("list: ", frolich_ics_by_subject[:10])
-selected_dataframes = [frolich_ics_by_subject[index] for index in range(10)]
-X_train.extend(df['ICs'][0] for df in selected_dataframes)
-y_train.extend(df['labels'][0] for df in selected_dataframes)
-
-selected_dataframes = [frolich_ics_by_subject[index] for index in [10, 11]]
-X_test.extend(df['ICs'][0] for df in selected_dataframes)
-y_test.extend(df['labels'][0] for df in selected_dataframes)
-
-print(selected_dataframes[0]['labels'])
-print("y_train labels: ", y_train)
-if len(X_train) != len(y_train) or len(X_test) != len(y_test):
-    raise ValueError('X and y are not the same length.')
+# X_train, X_test, y_train, y_test = [], [], [], []
+#
+# #print("list: ", frolich_ics_by_subject[:10])
+# selected_dataframes = [frolich_ics_by_subject[index] for index in range(10)]
+# X_train.extend(df['ICs'][0] for df in selected_dataframes)
+# y_train.extend(df['labels'][0] for df in selected_dataframes)
+#
+# selected_dataframes = [frolich_ics_by_subject[index] for index in [10, 11]]
+# X_test.extend(df['ICs'][0] for df in selected_dataframes)
+# y_test.extend(df['labels'][0] for df in selected_dataframes)
+#
+# print(selected_dataframes[0]['labels'])
+# print("y_train labels: ", y_train)
+# if len(X_train) != len(y_train) or len(X_test) != len(y_test):
+#     raise ValueError('X and y are not the same length.')
 
 #train codebooks by subject and class
-train_and_store_codebooks(X_train, y_train, train_or_test='train')
-train_and_store_codebooks(X_test, y_test, train_or_test='test')
+for i in range(12):
+    train_and_store_codebooks(frolich_ics_by_subject, loo_subj=i)
+# train_and_store_codebooks(X_train, y_train, train_or_test='train')
+# train_and_store_codebooks(X_test, y_test, train_or_test='test')
 
 #
 #
