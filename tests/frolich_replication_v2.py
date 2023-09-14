@@ -13,7 +13,7 @@ from sklearn.metrics import confusion_matrix
 import seaborn as sns
 import re
 
-pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
+#pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
 
 import BOWaves.utilities.dataloaders as dataloaders
 from BOWaves.sikmeans.sikmeans_core import shift_invariant_k_means, _assignment_step
@@ -59,7 +59,7 @@ def bag_of_waves(raw_ics, codebooks):
             X[ic, i_feature] = counts
     return X
 
-def train_and_store_codebooks(ICs, labels, train_or_test):
+def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
     """
     This calculates a codebook for each class, per subject. These are then stored in separate files.
 
@@ -67,43 +67,93 @@ def train_and_store_codebooks(ICs, labels, train_or_test):
     specific held out subjects. This way we avoid contamination for LOO.
 
     Files saved in data/frolich/codebooks. Other params etc are not necessary currently.
+
+    Sept. 14
+    Changing this so that you just pass in all ICs and labels at once, split by subject. Then loo_subj
+    calculates the test for that and train for everything else.
+    The way I'll pass in the data is through the frolich_ics_by_subj dictionary. Make sure the nested list works.
     Returns
     -------
 
     """
 
-    neural = {'name': 'neural', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
-    blink = {'name': 'blink', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
-    muscle = {'name': 'muscle', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
-    mixed = {'name': 'mixed', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
-    lateyes = {'name': 'lateyes', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
-    heart = {'name': 'heart', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+    # train_subjects = [f'{i+1:02}' for i in range(12)]
+    # train_subjects.remove(loo_subj)
 
-    all_classes = [neural, blink, muscle, mixed, lateyes, heart]
+    neural_train = {'name': 'neural', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+    blink_train = {'name': 'blink', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+    muscle_train = {'name': 'muscle', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+    mixed_train = {'name': 'mixed', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+    lateyes_train = {'name': 'lateyes', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+    heart_train = {'name': 'heart', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
 
-    for i in range(len(X_train)):
-        print(y_train[i])
-        if y_train[i] == 'neural':
-            neural['ICs'].append(X_train[i])
-        elif y_train[i] == 'blink':
-            blink['ICs'].append(X_train[i])
-        elif y_train[i] == 'muscle':
-            muscle['ICs'].append(X_train[i])
-        elif y_train[i] == 'mixed':
-            mixed['ICs'].append(X_train[i])
-        elif y_train[i] == 'lateyes':
-            lateyes['ICs'].append(X_train[i])
-        elif y_train[i] == 'heart':
-            heart['ICs'].append(X_train[i])
+    all_classes_train = [neural_train, blink_train, muscle_train, mixed_train, lateyes_train, heart_train]
+
+    neural_test = {'name': 'neural', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+    blink_test = {'name': 'blink', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+    muscle_test = {'name': 'muscle', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+    mixed_test = {'name': 'mixed', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+    lateyes_test = {'name': 'lateyes', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+    heart_test = {'name': 'heart', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
+
+    all_classes_test = [neural_test, blink_test, muscle_test, mixed_test, lateyes_test, heart_test]
+
+    # train_data = [frolich_ICs_by_subj[subject] for subject in train_subjects]
+
+    for subject in frolich_ICs_by_subj:
+        if subject['subject'] != loo_subj:
+            print(subject['labels'])
+
+            if len(subject['ICs'] != len(subject['labels'])):
+                raise ValueError('ICs and labels are not the same length.')
+
+            for i, label in enumerate(subject['labels']):
+                if label == 'neural':
+                    neural_train['ICs'].append(subject['ICs'][i])
+                elif label == 'blink':
+                    blink_train['ICs'].append(subject['ICs'][i])
+                elif label == 'muscle':
+                    muscle_train['ICs'].append(subject['ICs'][i])
+                elif label == 'mixed':
+                    mixed_train['ICs'].append(subject['ICs'][i])
+                elif label == 'lateyes':
+                    lateyes_train['ICs'].append(subject['ICs'][i])
+                elif label == 'heart':
+                    heart_train['ICs'].append(subject['ICs'][i])
+                else:
+                    raise ValueError('Unknown class label: ' + label)
         else:
-            raise ValueError('Unknown class label: ' + y_train[i])
+            print(subject['labels'])
+
+            if len(subject['ICs'] != len(subject['labels'])):
+                raise ValueError('ICs and labels are not the same length.')
+
+            for i, label in enumerate(subject['labels']):
+                if label == 'neural':
+                    neural_test['ICs'].append(subject['ICs'][i])
+                elif label == 'blink':
+                    blink_test['ICs'].append(subject['ICs'][i])
+                elif label == 'muscle':
+                    muscle_test['ICs'].append(subject['ICs'][i])
+                elif label == 'mixed':
+                    mixed_test['ICs'].append(subject['ICs'][i])
+                elif label == 'lateyes':
+                    lateyes_test['ICs'].append(subject['ICs'][i])
+                elif label == 'heart':
+                    heart_test['ICs'].append(subject['ICs'][i])
+                else:
+                    raise ValueError('Unknown class label: ' + label)
+
+
+    return
 
     window_len = 256  # what's the sampling rate again?
 
+    # where am I saving this or calling sikmeans? Think I did this wrong
     windows_per_class = {'neural': [], 'blink': [], 'muscle': [], 'mixed': [], 'lateyes': [], 'heart': []}
 
     tot_num_windows = 0  # to house total number of windows for all ICs
-    for label in all_classes:
+    for label in all_classes_train:
         # iterate through class and collect info about sequence lengths
         ic_lengths = []
         n_ics = len(label[
@@ -164,8 +214,10 @@ def train_and_store_codebooks(ICs, labels, train_or_test):
     path = pyrootutils.find_root(search_from=__file__, indicator=".git")
 
     #now save the codebooks trained on all ICs from each class in the train data.
-    for label in all_classes:
-        out_file = path / f'data/codebooks/frolich/{train_or_test}_{label["name"]}.npz'
+
+    #make separate folder for each.
+    for label in all_classes_train:
+        out_file = path / f'data/codebooks/frolich/loo_{loo_subj}/train_{label["name"]}_minus_{loo_subj}.npz'
         with open(out_file, 'wb') as f:
             np.savez(out_file, centroids=label['centroids'], labels=label['labels'],
                      shifts=label['shifts'], distances=label['distances'], inertia=label['inertia'])
@@ -176,7 +228,7 @@ def train_and_store_codebooks(ICs, labels, train_or_test):
 
 #frolich_ics = {'ICs': np.array([]), 'labels': np.array([])}
 frolich_ics = {'ICs': [], 'labels': []}
-frolich_ics_by_subject = [{'subject': f'{i+1:02}', 'ICs': [], 'labels': []} for i in range(12)]
+frolich_ics_by_subject = [{'subject': i, 'ICs': [], 'labels': []} for i in range(12)]
 
 #for file in directory frolich data
 frolich_data = os.listdir('../data/frolich')
@@ -205,6 +257,9 @@ for file in frolich_data:
 #X_train, y_train = frolich_ics_by_subject[0:10]['ICs'], frolich_ics_by_subject[0:10]['labels']
 #X_test, y_test = frolich_ics_by_subject[10:12]['ICs'], frolich_ics_by_subject[10:12]['labels']
 
+
+# TODO - modify below to do LOO by subject, calling train and store codebooks each time.
+
 X_train, X_test, y_train, y_test = [], [], [], []
 
 #print("list: ", frolich_ics_by_subject[:10])
@@ -227,7 +282,6 @@ train_and_store_codebooks(X_test, y_test, train_or_test='test')
 
 #
 #
-# # Forgot what the classes were. check on Caviness
 # neural = {'name': 'neural', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
 # blink = {'name': 'blink', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
 # muscle = {'name': 'muscle', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': [], 'distances': [], 'inertia': []}
