@@ -152,97 +152,97 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
 
 
 
-    # window_len = 256  # what's the sampling rate again?
-    #
-    # # where am I saving this or calling sikmeans? Think I did this wrong
-    # # oh. I was doing that before wrapping it in this function.
-    # # I need to grab the windows first, and then pass all of it to sikmeans.
-    # windows_per_class = {'neural': [], 'blink': [], 'muscle': [], 'mixed': [], 'lateyes': [], 'heart': []}
-    #
-    # tot_num_windows = 0  # to house total number of windows for all ICs
-    # for label in all_classes_train:
-    #     # iterate through class and collect info about sequence lengths
-    #     ic_lengths = []
-    #     n_ics = len(label[
-    #                     'ICs'])  # need to change, this thinks it's talking about a str not the dict. way to do what I want in python?
-    #     for ic in label['ICs']:
-    #         ic_lengths.append(len(ic))
-    #
-    #     # Currently, assuming that we are not taking a subset of the ICs at all. Carlos had the option for that in his earlier window code.
-    #     # So the number of windows per ic will just be the length of each ic / win len.
-    #     n_windows_per_ic = [ic_len // window_len for ic_len in ic_lengths]
-    #     tot_num_windows += sum(n_windows_per_ic)
-    #
-    #     # Now that we have the number of windows per ic, we can create the windows.
-    #
-    #     rng = np.random.RandomState(42)
-    #
-    #     X = np.zeros((tot_num_windows, window_len))  # X is for each class. Stack later
-    #     win_start = 0
-    #     # for label in all_classes:
-    #     for ic in label['ICs']:
-    #         windows_per_ic = len(ic) // window_len
-    #         time_idx = np.arange(0, len(ic) - window_len + 1, window_len)
-    #         time_idx = rng.choice(time_idx, size=windows_per_ic, replace=False)
-    #         time_idx = time_idx[:, None] + np.arange(window_len)[None, :]
-    #
-    #
-    #         # There seems to be an off by one error here.
-    #         # The very last IC goes past the total num of windows in X.
-    #         # Not sure if it's off by one, since the first portion of X is filled. Perhaps it's about how I calc
-    #         # the total num of ICs? - don't think so. So cut off at the last time.
-    #
-    #         if (win_start == tot_num_windows):
-    #             break
-    #
-    #         X[win_start:win_start + windows_per_ic] = ic[time_idx]
-    #         win_start += windows_per_ic
-    #
-    #     if label['name'] == 'neural':
-    #         windows_per_class['neural'] = X
-    #     windows_per_class[label['name']] = X
-    #     print("type of first element at every iteration: \t", type(windows_per_class['neural']))
-    #     print(label['name'] + ': ' + str(type(windows_per_class[label['name']])))
-    #     print("type of X: ", type(X))
-    #
-    # path = pyrootutils.find_root(search_from=__file__, indicator=".git")
-    #
-    # #now calculate sikmeans on the above windows per class.
-    #
-    # metric, init = 'cosine', 'random'
-    # num_clusters = 16
-    # centroid_len = 256
-    # n_runs = 3
-    # n_jobs = 1
-    # rng = 42#np.random.RandomState(42)
-    #
-    # #error checking of type in windows per class
-    # print("after training codebooks")
-    # for label in windows_per_class:
-    #     print(label + ': ' + str(type(windows_per_class[label])))
-    #
-    # #need to do this per class.
-    # neural_train['centroids'], neural_train['labels'], neural_train['shifts'], neural_train['distances'], neural_train['inertia'], _ = \
-    #     shift_invariant_k_means(windows_per_class['neural'], num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
-    # blink_train['centroids'], blink_train['labels'], blink_train['shifts'], blink_train['distances'], blink_train['inertia'], _ = \
-    #     shift_invariant_k_means(windows_per_class['blink'], num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
-    # muscle_train['centroids'], muscle_train['labels'], muscle_train['shifts'], muscle_train['distances'], muscle_train['inertia'], _ = \
-    #     shift_invariant_k_means(windows_per_class['muscle'], num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
-    # mixed_train['centroids'], mixed_train['labels'], mixed_train['shifts'], mixed_train['distances'], mixed_train['inertia'], _ = \
-    #     shift_invariant_k_means(windows_per_class['mixed'], num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
-    # lateyes_train['centroids'], lateyes_train['labels'], lateyes_train['shifts'], lateyes_train['distances'], lateyes_train['inertia'], _ = \
-    #     shift_invariant_k_means(windows_per_class['lateyes'], num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
-    # heart_train['centroids'], heart_train['labels'], heart_train['shifts'], heart_train['distances'], heart_train['inertia'], _ = \
-    #     shift_invariant_k_means(windows_per_class['heart'], num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
-    #
-    #
-    # #now save the codebooks trained on all ICs from each class in the train data.
-    # #make separate folder for each.
-    # for label in all_classes_train:
-    #     out_file = path / f'data/codebooks/frolich/loo_{loo_subj}/train_{label["name"]}_minus_{loo_subj}.npz'
-    #     with open(out_file, 'wb') as f:
-    #         np.savez(out_file, centroids=label['centroids'], labels=label['labels'],
-    #                  shifts=label['shifts'], distances=label['distances'], inertia=label['inertia'])
+    window_len = 256  # what's the sampling rate again?
+
+    # where am I saving this or calling sikmeans? Think I did this wrong
+    # oh. I was doing that before wrapping it in this function.
+    # I need to grab the windows first, and then pass all of it to sikmeans.
+    windows_per_class = {'neural': [], 'blink': [], 'muscle': [], 'mixed': [], 'lateyes': [], 'heart': []}
+
+    tot_num_windows = 0  # to house total number of windows for all ICs
+    for label in all_classes_train:
+        # iterate through class and collect info about sequence lengths
+        ic_lengths = []
+        n_ics = len(label[
+                        'ICs'])  # need to change, this thinks it's talking about a str not the dict. way to do what I want in python?
+        for ic in label['ICs']:
+            ic_lengths.append(len(ic))
+
+        # Currently, assuming that we are not taking a subset of the ICs at all. Carlos had the option for that in his earlier window code.
+        # So the number of windows per ic will just be the length of each ic / win len.
+        n_windows_per_ic = [ic_len // window_len for ic_len in ic_lengths]
+        tot_num_windows += sum(n_windows_per_ic)
+
+        # Now that we have the number of windows per ic, we can create the windows.
+
+        rng = np.random.RandomState(42)
+
+        X = np.zeros((tot_num_windows, window_len))  # X is for each class. Stack later
+        win_start = 0
+        # for label in all_classes:
+        for ic in label['ICs']:
+            windows_per_ic = len(ic) // window_len
+            time_idx = np.arange(0, len(ic) - window_len + 1, window_len)
+            time_idx = rng.choice(time_idx, size=windows_per_ic, replace=False)
+            time_idx = time_idx[:, None] + np.arange(window_len)[None, :]
+
+
+            # There seems to be an off by one error here.
+            # The very last IC goes past the total num of windows in X.
+            # Not sure if it's off by one, since the first portion of X is filled. Perhaps it's about how I calc
+            # the total num of ICs? - don't think so. So cut off at the last time.
+
+            if (win_start == tot_num_windows):
+                break
+
+            X[win_start:win_start + windows_per_ic] = ic[time_idx]
+            win_start += windows_per_ic
+
+        if label['name'] == 'neural':
+            windows_per_class['neural'] = X
+        windows_per_class[label['name']] = X
+        print("type of first element at every iteration: \t", type(windows_per_class['neural']))
+        print(label['name'] + ': ' + str(type(windows_per_class[label['name']])))
+        print("type of X: ", type(X))
+
+    path = pyrootutils.find_root(search_from=__file__, indicator=".git")
+
+    #now calculate sikmeans on the above windows per class.
+
+    metric, init = 'cosine', 'random'
+    num_clusters = 16
+    centroid_len = 256
+    n_runs = 3
+    n_jobs = 1
+    rng = 42#np.random.RandomState(42)
+
+    #error checking of type in windows per class
+    print("after training codebooks")
+    for label in windows_per_class:
+        print(label + ': ' + str(type(windows_per_class[label])))
+
+    #need to do this per class.
+    neural_train['centroids'], neural_train['labels'], neural_train['shifts'], neural_train['distances'], neural_train['inertia'], _ = \
+        shift_invariant_k_means(windows_per_class['neural'], num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
+    blink_train['centroids'], blink_train['labels'], blink_train['shifts'], blink_train['distances'], blink_train['inertia'], _ = \
+        shift_invariant_k_means(windows_per_class['blink'], num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
+    muscle_train['centroids'], muscle_train['labels'], muscle_train['shifts'], muscle_train['distances'], muscle_train['inertia'], _ = \
+        shift_invariant_k_means(windows_per_class['muscle'], num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
+    mixed_train['centroids'], mixed_train['labels'], mixed_train['shifts'], mixed_train['distances'], mixed_train['inertia'], _ = \
+        shift_invariant_k_means(windows_per_class['mixed'], num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
+    lateyes_train['centroids'], lateyes_train['labels'], lateyes_train['shifts'], lateyes_train['distances'], lateyes_train['inertia'], _ = \
+        shift_invariant_k_means(windows_per_class['lateyes'], num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
+    heart_train['centroids'], heart_train['labels'], heart_train['shifts'], heart_train['distances'], heart_train['inertia'], _ = \
+        shift_invariant_k_means(windows_per_class['heart'], num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
+
+
+    #now save the codebooks trained on all ICs from each class in the train data.
+    #make separate folder for each.
+    for label in all_classes_train:
+        out_file = path / f'data/codebooks/frolich/loo_{loo_subj}/train_{label["name"]}_minus_{loo_subj}.npz'
+        with open(out_file, 'wb') as f:
+            np.savez(out_file, centroids=label['centroids'], labels=label['labels'],
+                     shifts=label['shifts'], distances=label['distances'], inertia=label['inertia'])
 
     #now redo whole process for the lone test subject
     window_len = 256
