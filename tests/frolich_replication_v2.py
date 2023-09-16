@@ -245,6 +245,7 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
     #                  shifts=label['shifts'], distances=label['distances'], inertia=label['inertia'])
 
     #now redo whole process for the lone test subject
+    window_len = 256
 
     windows_per_class = {'neural': [], 'blink': [], 'muscle': [], 'mixed': [], 'lateyes': [], 'heart': []}
 
