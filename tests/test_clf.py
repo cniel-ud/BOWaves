@@ -20,6 +20,25 @@ import pyrootutils
 
 pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
 
+"""
+Outlining the steps.
+
+Import from bowaves.utilities.dataloader load_codebooks, load_raw_set (move here first)
+Import from bowaves.feature_extractors.bowav bag_of_waves
+Import feature visualization code, which I need to add
+
+Load the classifier from the pickle file
+
+Load the codebooks
+
+Load the raw ICs, with the expert label mask (from load raw set. can discard rest)
+
+Visualize
+
+Do other things like calculate score
+"""
+
+
 
 """
 from icwaves.data_loaders import load_codebooks, load_raw_set
