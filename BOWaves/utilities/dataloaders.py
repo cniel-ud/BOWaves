@@ -124,3 +124,47 @@ def load_and_visualize_mat_file_frolich(file_path, up_to=None, visualize=False):
 #Y, labels = load_and_visualize_mat_file_frolich('../../data/frolich/frolich_extract_01.mat')#, visualize=True)
 
 #print()
+
+def load_codebooks(dict_dir, num_clusters, centroid_len, minutes_per_ic, ics_per_subject):
+    """
+
+    This loads the codebooks. Assume that the codebooks are all housed in the results/dictionaries
+    folder and that we can then find them based off of the args passed in.
+
+    When we use this in the package, the root / results will be different. Use highest level results
+    directory for what we use to test the package.
+    Let me just put in the directory now.
+
+
+    If package keeps being developed, then eventually unit tests and whatnot will all use those results.
+
+
+    Parameters
+    ----------
+    dict_dir: For testing cue dataset, expected to be root / results / emotion_clf_dictionaries
+        This should be a Path object, not a string.
+    num_clusters
+    centroid_len
+    minutes_per_ic
+    ics_per_subject
+
+    Returns
+    -------
+
+    """
+
+    n_codebooks = 7
+    codebooks = np.zeros((n_codebooks, num_clusters, centroid_len), dtype=np.float32)
+
+    for i_class in range(n_codebooks):
+        fname = (
+            f'sikmeans_P-{centroid_len}_k-{num_clusters}'
+            f'_class-{i_class+1}_minutesPerIC-{minutes_per_ic}'
+            f'_icsPerSubj-{ics_per_subject}.npz'
+        )
+
+        fpath = dict_dir.joinpath(fname)
+        with np.load(fpath) as data:
+            codebooks[i_class] = data['centroids']
+
+    return codebooks
