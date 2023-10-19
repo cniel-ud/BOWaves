@@ -83,7 +83,7 @@ def load_and_visualize_mat_file_frolich(file_path, up_to=None, visualize=False):
     Y = W @ X #combine here to get the ICs
 
     # this is the Cue dataset from Frolich, not the Emotion one. 500 Hz
-    #train classifier on emotion, test on Cue. need to change sampling rate in between
+    # train classifier on emotion, test on Cue. need to change sampling rate in between
 
     # need different number of minutes per IC / window. Carlos' default params were 15, which is 27 mil
     # time points. We've only got 2 mil. Change that param based on what Frolich uses and also keep in mind
