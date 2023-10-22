@@ -43,7 +43,7 @@ from BOWaves.bowav.bowav_feature_extractor import bag_of_waves
 # from BOWaves.utilities.visualizations import plot_confusion_matrix
 
 class Args:
-    root = '..' # will this line work with pyrootutils? Let's see
+    root = '/work/cniel/ajmeek/BOWaves/BOWaves' # will this line work with pyrootutils? Let's see
     window_len = 384
     minutes_per_ic = 50
     num_clusters = 128
