@@ -171,7 +171,7 @@ def load_codebooks(dict_dir, num_clusters, centroid_len, minutes_per_ic, ics_per
     return codebooks
 
 def load_raw_set(args, rng):
-    data_dir = Path(args.root, 'data/emotion_study/raw_data_and_IC_labels')
+    data_dir = Path(args.root, 'data/cue/')
     fnames = [f"subj-{i}.mat" for i in args.subj_ids]
     file_list = [data_dir.joinpath(f) for f in fnames]
 

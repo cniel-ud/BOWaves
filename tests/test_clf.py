@@ -43,7 +43,7 @@ from BOWaves.bowav.bowav_feature_extractor import bag_of_waves
 # from BOWaves.utilities.visualizations import plot_confusion_matrix
 
 class Args:
-    root = '/work/cniel/ajmeek/BOWaves/BOWaves' # will this line work with pyrootutils? Let's see
+    root = '/work/cniel/ajmeek/BOWaves/BOWaves' # force this for caviness
     window_len = 384
     minutes_per_ic = 50
     num_clusters = 128
@@ -65,25 +65,58 @@ attributes = [attr for attr in dir(args)
 for attr in attributes:
     print(f'{attr} = {getattr(args, attr)}')
 
-# C_str = '_'.join([str(i) for i in args.regularization_factor])
-# ew_str = '_'.join([str(i) for i in args.expert_weight])
-# l1_ratio_str = '_'.join([str(i) for i in args.l1_ratio])
-# fname = (
-#     f'clf-lr_penalty-{args.penalty}_solver-saga_C-{C_str}'
-#     f'_l1_ratio-{l1_ratio_str}'
-#     f'_expert_weight-{ew_str}'
-#     f'_cbookMinPerIC-{args.codebook_minutes_per_ic}'
-#     f'_cbookICsPerSubj-{args.codebook_ics_per_subject}.pickle'
-# )
-#
-# clf_path = Path(args.root, 'results/classifier', fname)
-# with clf_path.open('rb') as f:
-#     results = pickle.load(f)
-#
-# clf = results['best_estimator']['clf']
-# best_index = results["rank_test_scores"].argmin()
-# best_score = results[f"mean_test_scores"][best_index]
-# best_params = copy.deepcopy(results["params"][best_index])
+C_str = '_'.join([str(i) for i in args.regularization_factor])
+ew_str = '_'.join([str(i) for i in args.expert_weight])
+l1_ratio_str = '_'.join([str(i) for i in args.l1_ratio])
+fname = (
+    f'clf-lr_penalty-{args.penalty}_solver-saga_C-{C_str}'
+    f'_l1_ratio-{l1_ratio_str}'
+    f'_expert_weight-{ew_str}'
+    f'_cbookMinPerIC-{args.codebook_minutes_per_ic}'
+    f'_cbookICsPerSubj-{args.codebook_ics_per_subject}.pickle'
+)
+
+clf_path = Path(args.root, 'results/classifier', fname)
+with clf_path.open('rb') as f:
+    results = pickle.load(f)
+
+clf = results['best_estimator']['clf']
+best_index = results["rank_test_scores"].argmin()
+best_score = results[f"mean_test_scores"][best_index]
+best_params = copy.deepcopy(results["params"][best_index])
+
+
+fname = (
+    f'test_data_k-{args.num_clusters}_P-{args.centroid_len}'
+    f'_winlen-{args.window_len}_minPerIC-{args.minutes_per_ic}'
+    f'_cbookMinPerIc-{args.codebook_minutes_per_ic}'
+    f'_cbookICsPerSubj-{args.codebook_ics_per_subject}.npz'
+)
+data_file = Path(args.root, 'data/cue', fname)
+if data_file.is_file():
+    with np.load(data_file) as data:
+        X = data['X']
+        y = data['y']
+        noisy_labels = data['noisy_labels']
+        expert_label_mask = data['expert_label_mask']
+        subj_ind = data['subj_ind']
+else:
+    raw_ics, y, expert_label_mask, \
+        subj_ind, noisy_labels = load_raw_set(args, rng, train=False)
+    codebook_args = copy.deepcopy(args)
+    codebook_args.minutes_per_ic = args.codebook_minutes_per_ic
+    codebook_args.ics_per_subject = args.codebook_ics_per_subject
+    codebooks = load_codebooks(codebook_args)
+    X = bag_of_waves(raw_ics, codebooks)
+    with data_file.open('wb') as f:
+        np.savez(
+            f, raw_ics=raw_ics, X=X, y=y, noisy_labels=noisy_labels,
+            expert_label_mask=expert_label_mask, subj_ind=subj_ind)
+
+y_pred = clf.predict(X)
+
+print("y_pred: \n\t")
+print(y_pred)
 
 
 """
