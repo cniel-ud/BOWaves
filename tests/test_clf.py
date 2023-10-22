@@ -59,9 +59,9 @@ class Args:
 args = Args()
 rng = default_rng(13)
 
-#print(args)
-for i in args:
-    print(i)
+# Iterate through the members and print them
+for key, value in vars(args).items():
+    print(f"{key} = {value}")
 
 C_str = '_'.join([str(i) for i in args.regularization_factor])
 ew_str = '_'.join([str(i) for i in args.expert_weight])
