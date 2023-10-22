@@ -18,7 +18,7 @@ from sklearn.metrics import (balanced_accuracy_score, classification_report,
                              confusion_matrix)
 import pyrootutils
 
-pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
+#pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
 
 """
 Outlining the steps.
@@ -60,8 +60,10 @@ args = Args()
 rng = default_rng(13)
 
 # Iterate through the members and print them
-for key, value in vars(args).items():
-    print(f"{key} = {value}")
+attributes = [attr for attr in dir(args)
+              if not attr.startswith('__')]
+for attr in attributes:
+    print(f'{attr} = {getattr(args, attr)}')
 
 # C_str = '_'.join([str(i) for i in args.regularization_factor])
 # ew_str = '_'.join([str(i) for i in args.expert_weight])
