@@ -18,7 +18,7 @@ from sklearn.metrics import (balanced_accuracy_score, classification_report,
                              confusion_matrix)
 import pyrootutils
 
-#pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
+pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
 
 """
 Outlining the steps.
