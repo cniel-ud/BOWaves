@@ -38,6 +38,48 @@ Visualize
 Do other things like calculate score
 """
 
+from BOWaves.utilities.dataloaders import load_codebooks, load_raw_set
+from BOWaves.bowav.bowav_feature_extractor import bag_of_waves
+# from BOWaves.utilities.visualizations import plot_confusion_matrix
+
+class Args:
+    root = '..' # will this line work with pyrootutils? Let's see
+    window_len = 384
+    minutes_per_ic = 50
+    num_clusters = 128
+    centroid_len = 256
+    srate = 256
+    penalty = 'elasticnet'
+    regularization_factor = [0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0]
+    expert_weight = [1.0, 2.0, 4.0, 8.0, 16.0, 32.0]
+    l1_ratio = [0, 0.2, 0.4, 0.6, 0.8, 1]
+    codebook_minutes_per_ic = 50.0
+    codebook_ics_per_subject = 2
+
+args = Args()
+rng = default_rng(13)
+
+print(args)
+
+C_str = '_'.join([str(i) for i in args.regularization_factor])
+ew_str = '_'.join([str(i) for i in args.expert_weight])
+l1_ratio_str = '_'.join([str(i) for i in args.l1_ratio])
+fname = (
+    f'clf-lr_penalty-{args.penalty}_solver-saga_C-{C_str}'
+    f'_l1_ratio-{l1_ratio_str}'
+    f'_expert_weight-{ew_str}'
+    f'_cbookMinPerIC-{args.codebook_minutes_per_ic}'
+    f'_cbookICsPerSubj-{args.codebook_ics_per_subject}.pickle'
+)
+
+clf_path = Path(args.root, 'results/classifier', fname)
+with clf_path.open('rb') as f:
+    results = pickle.load(f)
+
+clf = results['best_estimator']['clf']
+best_index = results["rank_test_scores"].argmin()
+best_score = results[f"mean_test_scores"][best_index]
+best_params = copy.deepcopy(results["params"][best_index])
 
 
 """

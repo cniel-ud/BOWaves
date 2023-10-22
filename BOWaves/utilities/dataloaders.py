@@ -20,6 +20,7 @@ Where the functions housed in the current file come into play in the above pipel
 from scipy.io import loadmat
 from pathlib import Path
 import numpy as np
+import tqdm
 #import matplotlib.pyplot as plt
 import os
 
@@ -168,3 +169,58 @@ def load_codebooks(dict_dir, num_clusters, centroid_len, minutes_per_ic, ics_per
             codebooks[i_class] = data['centroids']
 
     return codebooks
+
+def load_raw_set(args, rng):
+    data_dir = Path(args.root, 'data/emotion_study/raw_data_and_IC_labels')
+    fnames = [f"subj-{i}.mat" for i in args.subj_ids]
+    file_list = [data_dir.joinpath(f) for f in fnames]
+
+    n_ics_per_subj = []
+    for file in file_list:
+        with file.open('rb') as f:
+            matdict = loadmat(f, variable_names=['labels', 'srate'])
+            labels = matdict['labels']
+            srate = matdict['srate']  # assumes all subjects have the same sampling rate
+            srate = srate.item(0)  # `srate.shape=(1,1)`. This extracts the number.
+            n_ics_per_subj.append(labels.shape[0])
+
+    n_ics = np.sum(n_ics_per_subj)
+    minutes_per_window = (args.window_len / srate / 60)
+    n_win_per_ic = np.ceil(args.minutes_per_ic / minutes_per_window).astype(int)
+
+    # NOTE: float32. ICs were saved in matlab as single.
+    X = np.zeros((n_ics, n_win_per_ic, args.window_len), dtype=np.float32)
+    y = -1 * np.ones(n_ics, dtype=int)
+
+    cum_ic_ind = 0
+    expert_label_mask_ar = np.full(n_ics, False)
+    subj_ind = np.zeros(n_ics, dtype=int)
+    # 7 ICLabel classes
+    noisy_labels_ar = np.zeros((n_ics, 7), dtype=np.float32)
+    for file, subjID in tqdm(zip(file_list, args.subj_ids)):
+        with file.open('rb') as f:
+            matdict = loadmat(f)
+            data = matdict['data']
+            icaweights = matdict['icaweights']
+            icasphere = matdict['icasphere']
+            noisy_labels = matdict['noisy_labels']
+            expert_label_mask = matdict['expert_label_mask']
+            # -1: Let class labels start at 0 in python
+            labels = matdict['labels'] - 1
+
+        expert_label_mask = expert_label_mask.astype(bool)
+        icaact = icaweights @ icasphere @ data
+
+        expert_label_mask = expert_label_mask.astype(bool)
+        for ic_ind, ic in enumerate(icaact):
+            time_idx = np.arange(0, ic.size - args.window_len + 1, args.window_len)
+            time_idx = rng.choice(time_idx, size=n_win_per_ic, replace=False)
+            time_idx = time_idx[:, None] + np.arange(args.window_len)[None, :]
+            X[cum_ic_ind] = ic[time_idx]
+            y[cum_ic_ind] = labels[ic_ind]
+            noisy_labels_ar[cum_ic_ind] = noisy_labels[ic_ind]
+            expert_label_mask_ar[cum_ic_ind] = expert_label_mask[ic_ind]
+            subj_ind[cum_ic_ind] = subjID
+            cum_ic_ind += 1
+
+    return X, y, expert_label_mask_ar, subj_ind, noisy_labels_ar
