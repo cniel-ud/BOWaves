@@ -18,4 +18,4 @@ pip install seaborn
 
 # Run bash / python script below
 
-python ../tests/frolich_replication_v2.py --loo_subj=1
+python ../tests/frolich_replication_v2.py --loo_subj=0
