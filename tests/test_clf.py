@@ -63,25 +63,25 @@ rng = default_rng(13)
 for key, value in vars(args).items():
     print(f"{key} = {value}")
 
-C_str = '_'.join([str(i) for i in args.regularization_factor])
-ew_str = '_'.join([str(i) for i in args.expert_weight])
-l1_ratio_str = '_'.join([str(i) for i in args.l1_ratio])
-fname = (
-    f'clf-lr_penalty-{args.penalty}_solver-saga_C-{C_str}'
-    f'_l1_ratio-{l1_ratio_str}'
-    f'_expert_weight-{ew_str}'
-    f'_cbookMinPerIC-{args.codebook_minutes_per_ic}'
-    f'_cbookICsPerSubj-{args.codebook_ics_per_subject}.pickle'
-)
-
-clf_path = Path(args.root, 'results/classifier', fname)
-with clf_path.open('rb') as f:
-    results = pickle.load(f)
-
-clf = results['best_estimator']['clf']
-best_index = results["rank_test_scores"].argmin()
-best_score = results[f"mean_test_scores"][best_index]
-best_params = copy.deepcopy(results["params"][best_index])
+# C_str = '_'.join([str(i) for i in args.regularization_factor])
+# ew_str = '_'.join([str(i) for i in args.expert_weight])
+# l1_ratio_str = '_'.join([str(i) for i in args.l1_ratio])
+# fname = (
+#     f'clf-lr_penalty-{args.penalty}_solver-saga_C-{C_str}'
+#     f'_l1_ratio-{l1_ratio_str}'
+#     f'_expert_weight-{ew_str}'
+#     f'_cbookMinPerIC-{args.codebook_minutes_per_ic}'
+#     f'_cbookICsPerSubj-{args.codebook_ics_per_subject}.pickle'
+# )
+#
+# clf_path = Path(args.root, 'results/classifier', fname)
+# with clf_path.open('rb') as f:
+#     results = pickle.load(f)
+#
+# clf = results['best_estimator']['clf']
+# best_index = results["rank_test_scores"].argmin()
+# best_score = results[f"mean_test_scores"][best_index]
+# best_params = copy.deepcopy(results["params"][best_index])
 
 
 """
