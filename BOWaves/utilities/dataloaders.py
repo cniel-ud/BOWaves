@@ -126,7 +126,7 @@ def load_and_visualize_mat_file_frolich(file_path, up_to=None, visualize=False):
 
 #print()
 
-def load_codebooks(dict_dir, num_clusters, centroid_len, minutes_per_ic, ics_per_subject):
+def load_codebooks(args):#dict_dir, num_clusters, centroid_len, minutes_per_ic, ics_per_subject):
     """
 
     This loads the codebooks. Assume that the codebooks are all housed in the results/dictionaries
@@ -153,22 +153,41 @@ def load_codebooks(dict_dir, num_clusters, centroid_len, minutes_per_ic, ics_per
     -------
 
     """
+    #
+    # n_codebooks = 7
+    # codebooks = np.zeros((n_codebooks, num_clusters, centroid_len), dtype=np.float32)
+    #
+    # for i_class in range(n_codebooks):
+    #     fname = (
+    #         f'sikmeans_P-{centroid_len}_k-{num_clusters}'
+    #         f'_class-{i_class+1}_minutesPerIC-{minutes_per_ic}'
+    #         f'_icsPerSubj-{ics_per_subject}.npz'
+    #     )
+    #
+    #     fpath = dict_dir.joinpath(fname)
+    #     with np.load(fpath) as data:
+    #         codebooks[i_class] = data['centroids']
+    #
+    # return codebooks
+
+    dict_dir = Path(args.root, 'results/dictionaries/cue')
 
     n_codebooks = 7
-    codebooks = np.zeros((n_codebooks, num_clusters, centroid_len), dtype=np.float32)
+    codebooks = np.zeros((n_codebooks, args.num_clusters,
+                        args.centroid_len), dtype=np.float32)
 
     for i_class in range(n_codebooks):
         fname = (
-            f'sikmeans_P-{centroid_len}_k-{num_clusters}'
-            f'_class-{i_class+1}_minutesPerIC-{minutes_per_ic}'
-            f'_icsPerSubj-{ics_per_subject}.npz'
+            f'sikmeans_P-{args.centroid_len}_k-{args.num_clusters}'
+            f'_class-{i_class+1}_minutesPerIC-{args.minutes_per_ic}'
+            f'_icsPerSubj-{args.ics_per_subject}.npz'
         )
-
         fpath = dict_dir.joinpath(fname)
         with np.load(fpath) as data:
             codebooks[i_class] = data['centroids']
 
     return codebooks
+
 
 def load_raw_set(args, rng):
     data_dir = Path(args.root, 'data/cue/')
