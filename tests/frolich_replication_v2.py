@@ -95,7 +95,8 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
     centroid_len = 500
     n_runs = 3
     n_jobs = 1
-    rng = 42
+    rng = np.random.RandomState(42)
+    #rng = 42
 
     # train_subjects = [f'{i+1:02}' for i in range(12)]
     # train_subjects.remove(loo_subj)
