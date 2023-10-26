@@ -16,5 +16,18 @@ import scipy
 import numpy as np
 
 # load codebook
-codebook = np.load('/work/cniel/ajmeek/BOWaves/BOWaves/data/codebooks/emotion/sikmeans_P-256_k-16_class-1_minutesPerIC-50_icsPerSubj-2.npz')
+#codebook = np.load('/work/cniel/ajmeek/BOWaves/BOWaves/data/codebooks/emotion/sikmeans_P-256_k-16_class-1_minutesPerIC-50_icsPerSubj-2.npz')
 
+for i in range(7):
+    codebook = np.load(f'/work/cniel/ajmeek/BOWaves/BOWaves/data/codebooks/emotion/sikmeans_P-256_k-16_class-{i+1}_minutesPerIC-50_icsPerSubj-2.npz')
+    centroids = codebook['centroids']
+
+
+    # resample centroids
+    # currently emotion sampling rate is 256 hz. this should work.
+    new_centroids = scipy.signal.resample(centroids, 500, axis=1)
+
+
+    # save new centroids
+    # do I need to specifically save all the other things?
+    np.savez(f'/work/cniel/ajmeek/BOWaves/BOWaves/data/codebooks/emotion_resampled_to_cue/sikmeans_P-256_k-16_class-{i+1}_minutesPerIC-50_icsPerSubj-2_resampled.npz', centroids=new_centroids)
