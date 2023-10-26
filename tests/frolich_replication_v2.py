@@ -97,7 +97,7 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
     n_jobs = 1
     #rng = np.random.RandomState(42)
     # rng should be a random generator instance
-    rng = default_rng(42)
+    rng = default_rng()
     #rng = 42
 
     # train_subjects = [f'{i+1:02}' for i in range(12)]
