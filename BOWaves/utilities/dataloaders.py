@@ -191,6 +191,10 @@ def load_codebooks(args):#dict_dir, num_clusters, centroid_len, minutes_per_ic, 
 
 def load_raw_set(args, rng):
     data_dir = Path(args.root, '/data/cue/')
+    # the above line does not work on Caviness. I don't know why.
+    # therefore,
+    data_dir = Path('../data/cue')
+
     fnames = [f"subj-{i}.mat" for i in args.subj_ids]
     file_list = [data_dir.joinpath(f) for f in fnames]
 
