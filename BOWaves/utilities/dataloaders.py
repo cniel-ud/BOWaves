@@ -183,7 +183,7 @@ def load_codebooks(args):#dict_dir, num_clusters, centroid_len, minutes_per_ic, 
 
     for i_class in range(n_codebooks):
         fname = (
-            f'sikmeans_P-{args.centroid_len}_k-{args.num_clusters}'
+            f'sikmeans_P-256_k-{args.num_clusters}' #actually P is 500 but didn't change filename when resampled
             f'_class-{i_class+1}_minutesPerIC-{args.minutes_per_ic}'
             f'_icsPerSubj-{args.ics_per_subject}_resampled.npz'
         )
