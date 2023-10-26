@@ -170,7 +170,7 @@ def load_codebooks(args):#dict_dir, num_clusters, centroid_len, minutes_per_ic, 
     #
     # return codebooks
 
-    dict_dir = Path(args.root, 'results/dictionaries/cue')
+    dict_dir = Path(args.root, '/data/codebooks/emotion_resampled_to_cue')
 
     n_codebooks = 7
     codebooks = np.zeros((n_codebooks, args.num_clusters,
@@ -190,7 +190,7 @@ def load_codebooks(args):#dict_dir, num_clusters, centroid_len, minutes_per_ic, 
 
 
 def load_raw_set(args, rng):
-    data_dir = Path(args.root, 'data/cue/')
+    data_dir = Path(args.root, '/data/cue/')
     fnames = [f"subj-{i}.mat" for i in args.subj_ids]
     file_list = [data_dir.joinpath(f) for f in fnames]
 
