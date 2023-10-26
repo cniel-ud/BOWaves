@@ -44,10 +44,10 @@ from BOWaves.bowav.bowav_feature_extractor import bag_of_waves
 
 class Args:
     root = '/work/cniel/ajmeek/BOWaves/BOWaves' # force this for caviness
-    window_len = 384
+    window_len = 750
     minutes_per_ic = 50
     num_clusters = 128
-    centroid_len = 256
+    centroid_len = 500 # changed to cue sampling rate
     srate = 256
     penalty = 'elasticnet'
     regularization_factor = [0.001, 0.01, 0.1, 1.0, 10.0, 100.0, 1000.0]
