@@ -20,7 +20,7 @@ Where the functions housed in the current file come into play in the above pipel
 from scipy.io import loadmat
 from pathlib import Path
 import numpy as np
-import tqdm
+from tqdm import tqdm
 #import matplotlib.pyplot as plt
 import os
 
@@ -171,6 +171,8 @@ def load_codebooks(args):#dict_dir, num_clusters, centroid_len, minutes_per_ic, 
     # return codebooks
 
     dict_dir = Path(args.root, '/data/codebooks/emotion_resampled_to_cue')
+
+    dict_dir = Path('../data/codebooks/emotion_resampled_to_cue')
 
     n_codebooks = 7
     codebooks = np.zeros((n_codebooks, args.num_clusters,
