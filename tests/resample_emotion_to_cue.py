@@ -23,7 +23,7 @@ pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
 #codebook = np.load('/work/cniel/ajmeek/BOWaves/BOWaves/data/codebooks/emotion/sikmeans_P-256_k-16_class-1_minutesPerIC-50_icsPerSubj-2.npz')
 
 for i in range(7):
-    codebook = np.load(f'../data/codebooks/emotion/sikmeans_P-256_k-128_class-{i+1}_minutesPerIC-50_icsPerSubj-2.npz')
+    codebook = np.load(f'../data/codebooks/emotion/sikmeans_P-256_k-128_class-{i+1}_minutesPerIC-50.0_icsPerSubj-2.npz')
     centroids = codebook['centroids']
 
 
@@ -34,4 +34,4 @@ for i in range(7):
 
     # save new centroids
     # do I need to specifically save all the other things?
-    np.savez(f'../data/codebooks/emotion_resampled_to_cue/sikmeans_P-256_k-128_class-{i+1}_minutesPerIC-50_icsPerSubj-2_resampled.npz', centroids=new_centroids)
+    np.savez(f'../data/codebooks/emotion_resampled_to_cue/sikmeans_P-256_k-128_class-{i+1}_minutesPerIC-50.0_icsPerSubj-2_resampled.npz', centroids=new_centroids)
