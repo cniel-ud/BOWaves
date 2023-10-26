@@ -170,6 +170,9 @@ def load_codebooks(args):#dict_dir, num_clusters, centroid_len, minutes_per_ic, 
     #
     # return codebooks
 
+
+    # TODO - hardcoded stuff for testing clf. change later for generalization
+
     dict_dir = Path(args.root, '/data/codebooks/emotion_resampled_to_cue')
 
     dict_dir = Path('../data/codebooks/emotion_resampled_to_cue')
@@ -182,7 +185,7 @@ def load_codebooks(args):#dict_dir, num_clusters, centroid_len, minutes_per_ic, 
         fname = (
             f'sikmeans_P-{args.centroid_len}_k-{args.num_clusters}'
             f'_class-{i_class+1}_minutesPerIC-{args.minutes_per_ic}'
-            f'_icsPerSubj-{args.ics_per_subject}.npz'
+            f'_icsPerSubj-{args.ics_per_subject}_resampled.npz'
         )
         fpath = dict_dir.joinpath(fname)
         with np.load(fpath) as data:
