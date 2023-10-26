@@ -194,6 +194,9 @@ def load_raw_set(args, rng):
     fnames = [f"subj-{i}.mat" for i in args.subj_ids]
     file_list = [data_dir.joinpath(f) for f in fnames]
 
+    print("data_dir: ", data_dir)
+    print("file_list:\n\t", file_list)
+
     n_ics_per_subj = []
     for file in file_list:
         with file.open('rb') as f:
