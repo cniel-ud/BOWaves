@@ -221,6 +221,8 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
         print(label['name'] + ': ' + str(type(windows_per_class[label['name']])))
         print("type of X: ", type(X))
 
+        rng = default_rng()
+
     path = pyrootutils.find_root(search_from=__file__, indicator=".git")
 
     #now calculate sikmeans on the above windows per class.
@@ -309,6 +311,8 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
         print("type of first element at every iteration: \t", type(windows_per_class['neural']))
         print(label['name'] + ': ' + str(type(windows_per_class[label['name']])))
         print("type of X: ", type(X))
+
+        rng = default_rng()
 
     #now calculate sikmeans on the above windows per class.
 
