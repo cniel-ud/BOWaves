@@ -200,7 +200,11 @@ def load_raw_set(args, rng):
     # therefore,
     data_dir = Path('../data/cue')
 
-    fnames = [f"subj-{i}.mat" for i in args.subj_ids]
+
+    fnames = [f"subj-{i}.mat" for i in args.subj_ids] #modify to test on subset for smaller time
+
+    #temp fix
+    fnames = fnames[0] #test a single subject for now
     file_list = [data_dir.joinpath(f) for f in fnames]
 
     print("data_dir: ", data_dir)
