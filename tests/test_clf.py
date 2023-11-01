@@ -109,10 +109,10 @@ codebook_args.minutes_per_ic = args.codebook_minutes_per_ic
 codebook_args.ics_per_subject = args.codebook_ics_per_subject
 codebooks = load_codebooks(codebook_args)
 X = bag_of_waves(raw_ics, codebooks)
-with data_file.open('wb') as f:
-    np.savez(
-        f, raw_ics=raw_ics, X=X, y=y, noisy_labels=noisy_labels,
-        expert_label_mask=expert_label_mask, subj_ind=subj_ind)
+# with data_file.open('wb') as f:
+#     np.savez(
+#         f, raw_ics=raw_ics, X=X, y=y, noisy_labels=noisy_labels,
+#         expert_label_mask=expert_label_mask, subj_ind=subj_ind)
 
 y_pred = clf.predict(X)
 
