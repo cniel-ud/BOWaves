@@ -205,7 +205,8 @@ def load_raw_set(args, rng):
 
     #temp fix
     fnames = fnames[0] #test a single subject for now
-    file_list = [data_dir.joinpath(f) for f in fnames]
+    #file_list = [data_dir.joinpath(f) for f in fnames]
+    file_list = [data_dir.joinpath(fnames)]
 
     print("data_dir: ", data_dir)
     print("file_list:\n\t", file_list)
