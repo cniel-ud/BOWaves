@@ -102,25 +102,34 @@ best_params = copy.deepcopy(results["params"][best_index])
 #         expert_label_mask = data['expert_label_mask']
 #         subj_ind = data['subj_ind']
 # else:
-raw_ics, y, expert_label_mask, \
-    subj_ind, noisy_labels, labels = load_raw_set(args, rng)
-codebook_args = copy.deepcopy(args)
-codebook_args.minutes_per_ic = args.codebook_minutes_per_ic
-codebook_args.ics_per_subject = args.codebook_ics_per_subject
-codebooks = load_codebooks(codebook_args)
-X = bag_of_waves(raw_ics, codebooks)
-# with data_file.open('wb') as f:
-#     np.savez(
-#         f, raw_ics=raw_ics, X=X, y=y, noisy_labels=noisy_labels,
-#         expert_label_mask=expert_label_mask, subj_ind=subj_ind)
+subj_ids = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
 
-y_pred = clf.predict(X)
+for subj_id in subj_ids:
+    raw_ics, y, expert_label_mask, \
+        subj_ind, noisy_labels, labels = load_raw_set(args, rng, '01')
+    codebook_args = copy.deepcopy(args)
+    codebook_args.minutes_per_ic = args.codebook_minutes_per_ic
+    codebook_args.ics_per_subject = args.codebook_ics_per_subject
+    codebooks = load_codebooks(codebook_args)
+    X = bag_of_waves(raw_ics, codebooks)
+    # with data_file.open('wb') as f:
+    #     np.savez(
+    #         f, raw_ics=raw_ics, X=X, y=y, noisy_labels=noisy_labels,
+    #         expert_label_mask=expert_label_mask, subj_ind=subj_ind)
 
-print("y_pred: \n\t")
-print(y_pred)
+    y_pred = clf.predict(X)
 
-print("labels: \n\t", labels)
+    print("y_pred: \n\t")
+    print(y_pred)
 
+    print("labels: \n\t", labels)
+
+    # save the y_pred and labels to a separate text file
+    with open(f'../data/cue/{subj_id}_pred_and_labels.txt', 'w') as f:
+        f.write(f'y_pred: \n\t{y_pred}\n')
+        f.write(f'labels: \n\t{labels}\n')
+
+# visualize conf matrices outside of the slurm system
 
 """
 from icwaves.data_loaders import load_codebooks, load_raw_set

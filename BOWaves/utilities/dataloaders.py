@@ -194,18 +194,19 @@ def load_codebooks(args):#dict_dir, num_clusters, centroid_len, minutes_per_ic, 
     return codebooks
 
 
-def load_raw_set(args, rng):
+def load_raw_set(args, rng, subj_id):
     data_dir = Path(args.root, '/data/cue/')
     # the above line does not work on Caviness. I don't know why.
     # therefore,
     data_dir = Path('../data/cue')
 
 
-    fnames = [f"subj-{i}.mat" for i in args.subj_ids] #modify to test on subset for smaller time
+    #fnames = [f"subj-{i}.mat" for i in args.subj_ids] #modify to test on subset for smaller time
 
-    #temp fix
-    fnames = fnames[0] #test a single subject for now
+    #temp fix, change to all subjects later
+    #fnames = fnames[0] #test a single subject for now
     #file_list = [data_dir.joinpath(f) for f in fnames]
+    fnames = [f'subj-{subj_id}.mat']
     file_list = [data_dir.joinpath(fnames)]
 
     print("data_dir: ", data_dir)
