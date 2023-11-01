@@ -259,4 +259,4 @@ def load_raw_set(args, rng):
             subj_ind[cum_ic_ind] = subjID
             cum_ic_ind += 1
 
-    return X, y, expert_label_mask_ar, subj_ind, noisy_labels_ar
+    return X, y, expert_label_mask_ar, subj_ind, noisy_labels_ar, labels

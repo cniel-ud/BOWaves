@@ -103,7 +103,7 @@ if data_file.is_file():
         subj_ind = data['subj_ind']
 else:
     raw_ics, y, expert_label_mask, \
-        subj_ind, noisy_labels = load_raw_set(args, rng)
+        subj_ind, noisy_labels, labels = load_raw_set(args, rng)
     codebook_args = copy.deepcopy(args)
     codebook_args.minutes_per_ic = args.codebook_minutes_per_ic
     codebook_args.ics_per_subject = args.codebook_ics_per_subject
@@ -118,6 +118,8 @@ y_pred = clf.predict(X)
 
 print("y_pred: \n\t")
 print(y_pred)
+
+print("labels: \n\t", labels)
 
 
 """
