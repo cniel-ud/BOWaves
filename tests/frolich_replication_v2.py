@@ -253,11 +253,12 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
     heart_train['centroids'], heart_train['labels'], heart_train['shifts'], heart_train['distances'], heart_train['inertia'], _ = \
         shift_invariant_k_means(windows_per_class['heart'], num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
 
+    print("train codebooks completed, saving to file")
 
     #now save the codebooks trained on all ICs from each class in the train data.
     #make separate folder for each.
     for label in all_classes_train:
-        out_file = path / f'data/codebooks/frolich/loo_{loo_subj}/train_{label["name"]}_minus_{loo_subj}.npz'
+        out_file = path / f'data/codebooks/frolich/loo_{loo_subj}/train_{label["name"]}_minus_{loo_subj}_winlen_{window_len}_centrlen_{centroid_len}_numclstrs_{num_clusters}.npz'
         with open(out_file, 'wb') as f:
             np.savez(out_file, centroids=label['centroids'], labels=label['labels'],
                      shifts=label['shifts'], distances=label['distances'], inertia=label['inertia'])
@@ -344,11 +345,12 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
     heart_test['centroids'], heart_test['labels'], heart_test['shifts'], heart_test['distances'], heart_test['inertia'], _ = \
         shift_invariant_k_means(windows_per_class['heart'], num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs, rng=rng,  verbose=True)
 
+    print("test codebooks completed, saving to file")
 
     #now save the codebooks trained on all ICs from each class in the train data.
     #make separate folder for each.
     for label in all_classes_test:
-        out_file = path / f'data/codebooks/frolich/loo_{loo_subj}/test_{label["name"]}_{loo_subj}.npz'
+        out_file = path / f'data/codebooks/frolich/loo_{loo_subj}/test_{label["name"]}_{loo_subj}_winlen_{window_len}_centrlen_{centroid_len}_numclstrs_{num_clusters}.npz'
         with open(out_file, 'wb') as f:
             np.savez(out_file, centroids=label['centroids'], labels=label['labels'],
                      shifts=label['shifts'], distances=label['distances'], inertia=label['inertia'])
