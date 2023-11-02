@@ -408,6 +408,9 @@ for file in frolich_data:
 #     raise ValueError('X and y are not the same length.')
 
 loo_subj = args.loo_subj
+
+print("Training codebook for subject: ", loo_subj)
+
 train_and_store_codebooks(frolich_ics_by_subject, loo_subj=loo_subj)
 
 

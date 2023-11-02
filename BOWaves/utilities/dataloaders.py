@@ -206,7 +206,7 @@ def load_raw_set(args, rng, subj_id):
     #temp fix, change to all subjects later
     #fnames = fnames[0] #test a single subject for now
     #file_list = [data_dir.joinpath(f) for f in fnames]
-    fnames = [f'subj-{subj_id}.mat']
+    fnames = f'subj-{subj_id}.mat'
     file_list = [data_dir.joinpath(fnames)]
 
     print("data_dir: ", data_dir)
