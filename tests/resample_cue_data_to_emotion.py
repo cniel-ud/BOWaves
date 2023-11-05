@@ -33,6 +33,10 @@ for file in file_list:
     # perhaps I can just change the srate here and have conditional logic in the dataloader,
     # but I'd much prefer to simply resample the data and srate fields here and leave that code alone.
 
+    # for scipne to resample axis 1. but it's 1979155 right now. So do (500/256) * 1979155 and put that
+    # in as the num parameter in scipy's resample method.
+    # First though, talk with Isabel and ask her to verify the documentation since idk signals processing
+
 
 # load codebook
 #codebook = np.load('/work/cniel/ajmeek/BOWaves/BOWaves/data/codebooks/emotion/sikmeans_P-256_k-16_class-1_minutesPerIC-50_icsPerSubj-2.npz')
