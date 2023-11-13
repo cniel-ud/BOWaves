@@ -106,7 +106,7 @@ subj_ids = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '1
 
 for subj_id in subj_ids:
     raw_ics, y, expert_label_mask, \
-        subj_ind, noisy_labels, labels = load_raw_set(args, rng, '01')
+        subj_ind, noisy_labels, labels = load_raw_set(args, rng, subj_ids)
     codebook_args = copy.deepcopy(args)
     codebook_args.minutes_per_ic = args.codebook_minutes_per_ic
     codebook_args.ics_per_subject = args.codebook_ics_per_subject
