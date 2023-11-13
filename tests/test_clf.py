@@ -127,9 +127,9 @@ for subj_id in subj_ids:
     # save the y_pred and labels to a separate text file
     with open(f'../data/cue/{subj_id}_pred_and_labels.txt', 'w') as f:
         f.write(f'y_pred: \n\t{y_pred}\n')
-        #f.write(f'labels: \n\t{labels[i]}\n' for i in range(len(labels)))
-        for i in range(len(labels)):
-            f.write(f'labels: \n\t{labels[i]}\n')
+        f.write(f'labels: \n\t{labels}\n')
+        # for i in range(len(labels)):
+        #     f.write(f'labels: \n\t{labels[i]}\n')
 
 # visualize conf matrices outside of the slurm system
 
