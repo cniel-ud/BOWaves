@@ -37,22 +37,6 @@ for file in file_list:
     # in as the num parameter in scipy's resample method.
     # First though, talk with Isabel and ask her to verify the documentation since idk signals processing
 
+    new_centroids = scipy.signal.resample(centroids, 500, axis=1)
 
-# load codebook
-#codebook = np.load('/work/cniel/ajmeek/BOWaves/BOWaves/data/codebooks/emotion/sikmeans_P-256_k-16_class-1_minutesPerIC-50_icsPerSubj-2.npz')
-
-# for i in range(7):
-#     codebook = np.load(f'../data/codebooks/emotion/sikmeans_P-256_k-128_class-{i+1}_minutesPerIC-50.0_icsPerSubj-2.npz')
-#     centroids = codebook['centroids']
-#
-#
-#     # resample centroids
-#     # currently emotion sampling rate is 256 hz. this should work.
-#     new_centroids = scipy.signal.resample(centroids, 500, axis=1)
-#
-#
-#     # save new centroids
-#     # do I need to specifically save all the other things?
-#     np.savez(f'../data/codebooks/emotion_resampled_to_cue/sikmeans_P-256_k-128_class-{i+1}_minutesPerIC-50.0_icsPerSubj-2_resampled.npz', centroids=new_centroids)
-#
-#
+# TODO - this is missing the resample. not sure when I had taken that out
