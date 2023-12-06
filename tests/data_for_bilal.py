@@ -6,7 +6,9 @@ The cue dataset's native sampling rate is 500 Hz, and I will resample to the sam
 
 This will also serve as an API guide for Bilal when he looks further into the code and writes his paper's method section.
 """
+import pyrootutils
 
+pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
 
 from BOWaves.utilities.dataloaders import load_codebooks, load_raw_set, load_raw_set_single_subj
 from BOWaves.bowav.bowav_feature_extractor import bag_of_waves
