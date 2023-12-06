@@ -43,7 +43,7 @@ def load_ics_from_matlab(root: Path, dataset_name: str):
     data_dir = root.joinpath('data', dataset_name)
 
 
-def load_and_visualize_mat_file_frolich(file_path, up_to=None, visualize=False):
+def load_and_visualize_mat_file_frolich(file_path, up_to=None, visualize=False, cue=False):
     """
     This takes in the preprocessed data from Frolich et. al
     W is the demixing matrix from ICA, X is the array of ICs
@@ -77,11 +77,18 @@ def load_and_visualize_mat_file_frolich(file_path, up_to=None, visualize=False):
     #         # if isinstance(value, np.ndarray):
     #         #     print(value)
 
-    # Visualize EEG time series data
-    X = data['X'] #raw
-    W = data['W'] #demixing matrix
+    if not cue:
+        # Visualize EEG time series data
+        X = data['X'] #raw
+        W = data['W'] #demixing matrix
 
-    Y = W @ X #combine here to get the ICs
+        Y = W @ X #combine here to get the ICs
+    elif cue:
+        X = data['data']
+        sphere = data['icasphere']
+        weights = data['icaweights']
+
+        Y = weights @ sphere @ X
 
     # this is the Cue dataset from Frolich, not the Emotion one. 500 Hz
     # train classifier on emotion, test on Cue. need to change sampling rate in between
