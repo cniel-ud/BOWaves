@@ -8,27 +8,29 @@ This will also serve as an API guide for Bilal when he looks further into the co
 """
 
 
-from BOWaves.utilities.dataloaders import load_codebooks, load_raw_set
+from BOWaves.utilities.dataloaders import load_codebooks, load_raw_set, load_raw_set_single_subj
 from BOWaves.bowav.bowav_feature_extractor import bag_of_waves
 import BOWaves.utilities.dataloaders as dataloaders
 from BOWaves.sikmeans.sikmeans_core import shift_invariant_k_means, _assignment_step
 
 import scipy
 from numpy.random import default_rng
+import numpy as np
+from pathlib import Path
 
-# resample cue subj 01 to 256 hz
-matdict = scipy.io.loadmat('../data/codebooks/frolich/subj-01.mat')
-
-# signals stored in 'data' field
-# original length is 1979155. So (500/256) * 1979155
-matdict['data'] = scipy.signal.resample(matdict['data'], int((500.0/256) * 1979155), axis=1)
-
-# save matdict to new file
-scipy.io.savemat('../data/codebooks/frolich/subj-01_resampled_to_mice.mat', matdict)
+# # resample cue subj 01 to 256 hz
+# matdict = scipy.io.loadmat('../data/codebooks/frolich/subj-01.mat')
+#
+# # signals stored in 'data' field
+# # original length is 1979155. So (500/256) * 1979155
+# matdict['data'] = scipy.signal.resample(matdict['data'], int((500.0/256) * 1979155), axis=1)
+#
+# # save matdict to new file
+# scipy.io.savemat('../data/codebooks/frolich/subj-01_resampled_to_mice.mat', matdict)
 
 
 # intermission - switch to HPC here to run codebooks. Then come back to desktop to run BOWaves
-# code run in between this lines was done on Caviness
+# code run in between these lines was done on Caviness / desktop
 # ----------------------------------------------------------------------------------------------
 file = '../data/cue/cue_signals_resampled_to_emotion/subj-01_resampled_to_mice.mat'
 
@@ -72,3 +74,38 @@ for i, label in enumerate(labels):
         heart['ICs'].append(ICs[i])
     else:
         raise ValueError('Unknown class label: ' + label)
+
+# train codebook for neural data
+neural['centroids'], neural['labels'], neural['shifts'], neural['distances'], neural['inertia'] = \
+    shift_invariant_k_means(neural['ICs'], num_clusters, window_len, metric, init, n_runs, n_jobs, rng)
+
+# save codebook
+np.savez(f'../data/codebooks/frolich/sikmeans_P-{window_len}_k-{num_clusters}_class-neural_subj-1.npz',
+         centroids=neural['centroids'], labels=neural['labels'], shifts=neural['shifts'], distances=neural['distances'],
+         inertia=neural['inertia'])
+
+
+# ----------------------------------------------------------------------------------------------
+
+# # now load codebook and calculate the BOWav count vector from it
+# class args:
+#     root = '../data/codebooks/frolich'
+#     num_clusters = 16
+#     window_len = 750
+#     minutes_per_ic = 1.5
+#     ics_per_subject = 100
+#     num_classes = 6
+#     centroid_len = 500
+#     n_jobs = 1
+#     rng = default_rng()
+# codebooks = load_codebooks(args)
+# rng = default_rng()
+#
+# raw_ics, y, expert_label_mask, \
+#     subj_ind, noisy_labels, labels = load_raw_set_single_subj(args, rng, Path('../data/codebooks/frolich'), fnames=['subj-01_resampled_to_mice.mat'])
+#
+# X = bag_of_waves(raw_ics, codebooks)
+#
+# # save BOWav count vector to a file
+# np.savez('../data/codebooks/frolich/bowav_count_vector_subj-01.npz', X=X, y=y, expert_label_mask=expert_label_mask,
+#          subj_ind=subj_ind, noisy_labels=noisy_labels, labels=labels)
