@@ -55,7 +55,7 @@ heart = {'name': 'heart', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': []
 
 all_classes = [neural, blink, muscle, mixed, lateyes, heart]
 
-ICs, labels = dataloaders.load_and_visualize_mat_file_frolich(file, visualize=False)
+ICs, labels = dataloaders.load_and_visualize_mat_file_frolich(file, visualize=False, cue=True)
 
 # error check
 if len(ICs) != len(labels):
