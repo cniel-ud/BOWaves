@@ -92,7 +92,7 @@ tot_num_windows += sum(n_windows_per_ic)
 
 
 # Now that we have the number of windows per ic, we can create the windows.
-rng = np.random.RandomState(42)
+#rng = np.random.RandomState(42)
 
 X = np.zeros((tot_num_windows, window_len))  # X is for each class. Stack later
 win_start = 0
