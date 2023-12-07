@@ -78,9 +78,49 @@ for i, label in enumerate(labels):
     else:
         raise ValueError('Unknown class label: ' + label)
 
+tot_num_windows = 0  # to house total number of windows for all ICs
+ic_lengths = []
+
+# now take the neural ICs and transform into right shape for sikmeans
+for ic in neural['ICs']:
+    ic_lengths.append(len(ic))
+
+# Currently, assuming that we are not taking a subset of the ICs at all. Carlos had the option for that in his earlier window code.
+# So the number of windows per ic will just be the length of each ic / win len.
+n_windows_per_ic = [ic_len // window_len for ic_len in ic_lengths]
+tot_num_windows += sum(n_windows_per_ic)
+
+
+# Now that we have the number of windows per ic, we can create the windows.
+rng = np.random.RandomState(42)
+
+X = np.zeros((tot_num_windows, window_len))  # X is for each class. Stack later
+win_start = 0
+# for label in all_classes:
+for ic in neural['ICs']:
+    windows_per_ic = len(ic) // window_len
+    time_idx = np.arange(0, len(ic) - window_len + 1, window_len)
+    time_idx = rng.choice(time_idx, size=windows_per_ic, replace=False)
+    time_idx = time_idx[:, None] + np.arange(window_len)[None, :]
+
+
+    # There seems to be an off by one error here.
+    # The very last IC goes past the total num of windows in X.
+    # Not sure if it's off by one, since the first portion of X is filled. Perhaps it's about how I calc
+    # the total num of ICs? - don't think so. So cut off at the last time.
+
+    if (win_start == tot_num_windows):
+        break
+
+    X[win_start:win_start + windows_per_ic] = ic[time_idx]
+    win_start += windows_per_ic
+
+neural_windows = X
+
+
 # train codebook for neural data
 neural['centroids'], neural['labels'], neural['shifts'], neural['distances'], neural['inertia'] = \
-    shift_invariant_k_means(neural['ICs'], num_clusters, window_len, metric, init, n_runs, n_jobs, rng)
+    shift_invariant_k_means(neural_windows, num_clusters, window_len, metric, init, n_runs, n_jobs, rng)
 
 # save codebook
 np.savez(f'../data/codebooks/frolich/sikmeans_P-{window_len}_k-{num_clusters}_class-neural_subj-1.npz',
