@@ -120,7 +120,7 @@ neural_windows = X
 
 # train codebook for neural data
 neural['centroids'], neural['labels'], neural['shifts'], neural['distances'], neural['inertia'] = \
-    shift_invariant_k_means(neural_windows, num_clusters, window_len, metric, init, n_runs, n_jobs, rng)
+    shift_invariant_k_means(neural_windows, num_clusters, window_len, metric, init, n_runs, n_jobs)#, rng)
 
 # save codebook
 np.savez(f'../data/codebooks/frolich/sikmeans_P-{window_len}_k-{num_clusters}_class-neural_subj-1.npz',
