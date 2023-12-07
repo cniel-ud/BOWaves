@@ -8,6 +8,7 @@ This will also serve as an API guide for Bilal when he looks further into the co
 """
 import pyrootutils
 
+# un comment for caviness
 pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
 
 from BOWaves.utilities.dataloaders import load_codebooks, load_raw_set, load_raw_set_single_subj
@@ -21,20 +22,20 @@ import numpy as np
 from pathlib import Path
 
 # # resample cue subj 01 to 256 hz
-# matdict = scipy.io.loadmat('../data/codebooks/frolich/subj-01.mat')
+# matdict = scipy.io.loadmat('../data/frolich/frolich_extract_01.mat')
 #
 # # signals stored in 'data' field
 # # original length is 1979155. So (500/256) * 1979155
-# matdict['data'] = scipy.signal.resample(matdict['data'], int((500.0/256) * 1979155), axis=1)
+# matdict['X'] = scipy.signal.resample(matdict['X'], int((500.0/256) * 1979155), axis=1)
 #
 # # save matdict to new file
-# scipy.io.savemat('../data/codebooks/frolich/subj-01_resampled_to_mice.mat', matdict)
+# scipy.io.savemat('../data/codebooks/frolich/frolich_extract_subj_01_resampled_to_mice.mat', matdict)
 
 
 # intermission - switch to HPC here to run codebooks. Then come back to desktop to run BOWaves
 # code run in between these lines was done on Caviness / desktop
 # ----------------------------------------------------------------------------------------------
-file = '../data/cue/cue_signals_resampled_to_emotion/subj-01_resampled_to_mice.mat'
+file = '../data/cue/cue_signals_resampled_to_emotion/frolich_extract_subj_01_resampled_to_mice.mat'
 
 # these hyperparams are based on sampling rate. want 1 sec centroid, 1.5 sec window
 window_len = 750
@@ -55,7 +56,7 @@ heart = {'name': 'heart', 'ICs': [], 'centroids': [], 'labels': [], 'shifts': []
 
 all_classes = [neural, blink, muscle, mixed, lateyes, heart]
 
-ICs, labels = dataloaders.load_and_visualize_mat_file_frolich(file, visualize=False, cue=True)
+ICs, labels = dataloaders.load_and_visualize_mat_file_frolich(file, visualize=False)
 
 # error check
 if len(ICs) != len(labels):

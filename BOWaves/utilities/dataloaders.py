@@ -77,18 +77,18 @@ def load_and_visualize_mat_file_frolich(file_path, up_to=None, visualize=False, 
     #         # if isinstance(value, np.ndarray):
     #         #     print(value)
 
-    if not cue:
-        # Visualize EEG time series data
-        X = data['X'] #raw
-        W = data['W'] #demixing matrix
+    # if not cue:
+    # Visualize EEG time series data
+    X = data['X'] #raw
+    W = data['W'] #demixing matrix
 
-        Y = W @ X #combine here to get the ICs
-    elif cue:
-        X = data['data']
-        sphere = data['icasphere']
-        weights = data['icaweights']
-
-        Y = weights @ sphere @ X
+    Y = W @ X #combine here to get the ICs
+    # elif cue:
+    #     X = data['data']
+    #     sphere = data['icasphere']
+    #     weights = data['icaweights']
+    #
+    #     Y = weights @ sphere @ X
 
     # this is the Cue dataset from Frolich, not the Emotion one. 500 Hz
     # train classifier on emotion, test on Cue. need to change sampling rate in between
@@ -124,7 +124,24 @@ def load_and_visualize_mat_file_frolich(file_path, up_to=None, visualize=False, 
     labels_in_order = []
     for count, i in enumerate(data['labels']):
         # print(f"IC #{count} is label {data['classes'][0][i-1][0][0]}")
+        # if not cue:
         labels_in_order.append(data['classes'][0][i-1][0][0])
+        # elif cue:
+        #     if i == 1:
+        #         labels_in_order.append('blink')
+        #     elif i == 2:
+        #         labels_in_order.append('neural')
+        #     elif i == 3:
+        #         labels_in_order.append('heart')
+        #     elif i == 4:
+        #         labels_in_order.append('lateyes')
+        #     elif i == 5:
+        #         labels_in_order.append('muscle')
+        #     elif i == 6:
+        #         labels_in_order.append('mixed')
+        #     else:
+        #         # non-cue data (emotion) has different set of labels with len 7 != 6.
+        #         pass
 
     return Y, labels_in_order
 
