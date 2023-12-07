@@ -119,7 +119,7 @@ neural_windows = X
 
 
 # train codebook for neural data
-neural['centroids'], neural['labels'], neural['shifts'], neural['distances'], neural['inertia'] = \
+neural['centroids'], neural['labels'], neural['shifts'], neural['distances'], neural['inertia'], _ = \
     shift_invariant_k_means(neural_windows, num_clusters, window_len, metric, init, n_runs, n_jobs)#, rng)
 
 # save codebook
