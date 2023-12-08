@@ -160,3 +160,11 @@ np.savez(f'../data/codebooks/frolich/sikmeans_P-{window_len}_k-{num_clusters}_cl
 # # save BOWav count vector to a file
 # np.savez('../data/codebooks/frolich/bowav_count_vector_subj-01.npz', X=X, y=y, expert_label_mask=expert_label_mask,
 #          subj_ind=subj_ind, noisy_labels=noisy_labels, labels=labels)
+
+
+# ----------------------------------------------------------------------------------------------
+# Here I get the codebooks out of the mice dataset. There are six types of mice, of which half are WT - wild type.
+# meaning they are not genetically modified. Bilal, I'm currently getting you the codebooks and counts for the second one.
+# For your reference, this is BXD87 HET.
+
+# note - going to upload Isabel's stuff to the mice repo under cniel github first and get the codebook and counts there.
