@@ -120,7 +120,7 @@ neural_windows = X
 
 # train codebook for neural data
 neural['centroids'], neural['labels'], neural['shifts'], neural['distances'], neural['inertia'], _ = \
-    shift_invariant_k_means(neural_windows, num_clusters, window_len, metric, init, n_runs, n_jobs)#, rng)
+    shift_invariant_k_means(neural_windows, num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs)#, n_jobs)#, rng)
 
 # save codebook
 np.savez(f'../data/codebooks/frolich/sikmeans_P-{window_len}_k-{num_clusters}_class-neural_subj-1.npz',
@@ -129,7 +129,7 @@ np.savez(f'../data/codebooks/frolich/sikmeans_P-{window_len}_k-{num_clusters}_cl
 
 
 # ----------------------------------------------------------------------------------------------
-
+#
 # # now load codebook and calculate the BOWav count vector from it
 # class args:
 #     root = '../data/codebooks/frolich'
@@ -141,11 +141,19 @@ np.savez(f'../data/codebooks/frolich/sikmeans_P-{window_len}_k-{num_clusters}_cl
 #     centroid_len = 500
 #     n_jobs = 1
 #     rng = default_rng()
-# codebooks = load_codebooks(args)
+# #codebooks = load_codebooks(args)
+#
+# codebook_file_path = '../data/codebooks/frolich/sikmeans_P-750_k-16_class-neural_subj-1.npz'
+# n_codebooks = 1
+# codebooks = np.zeros((n_codebooks, args.num_clusters,
+#                         args.centroid_len), dtype=np.float32)
+# with np.load(codebook_file_path) as data:
+#     codebooks[0] = data['centroids']
+#
 # rng = default_rng()
 #
 # raw_ics, y, expert_label_mask, \
-#     subj_ind, noisy_labels, labels = load_raw_set_single_subj(args, rng, Path('../data/codebooks/frolich'), fnames=['subj-01_resampled_to_mice.mat'])
+#     subj_ind, noisy_labels, labels = load_raw_set_single_subj(args, rng, Path('../data/codebooks/frolich'), fnames=['frolich_extract_subj_01_resampled_to_mice.mat'])
 #
 # X = bag_of_waves(raw_ics, codebooks)
 #
