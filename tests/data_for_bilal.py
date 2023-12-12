@@ -127,7 +127,7 @@ neural['centroids'], neural['labels'], neural['shifts'], neural['distances'], ne
     shift_invariant_k_means(neural_windows, num_clusters, centroid_len, metric=metric, init=init, n_init=n_runs)#, n_jobs)#, rng)
 
 # save codebook
-np.savez(f'../data/codebooks/frolich/sikmeans_P-{window_len}_k-{num_clusters}_class-neural_subj-1.npz',
+np.savez(f'../data/codebooks/frolich/sikmeans_P-{window_len}_k-{num_clusters}_class-neural_subj-1_resampled.npz',
          centroids=neural['centroids'], labels=neural['labels'], shifts=neural['shifts'], distances=neural['distances'],
          inertia=neural['inertia'])
 
