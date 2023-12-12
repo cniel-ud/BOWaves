@@ -37,11 +37,15 @@ from pathlib import Path
 # ----------------------------------------------------------------------------------------------
 file = '../data/cue/cue_signals_resampled_to_emotion/frolich_extract_subj_01_resampled_to_mice.mat'
 
+
+# TODO - i resampled to a 256 sampling rate. The centroid len and window size need to change now to keep 1 sec centroid and 1.5 sec window.
+# Redo this tomorrow.
+
 # these hyperparams are based on sampling rate. want 1 sec centroid, 1.5 sec window
-window_len = 750
+window_len = 384
 metric, init = 'cosine', 'random'
 num_clusters = 16
-centroid_len = 500
+centroid_len = 256
 n_runs = 3
 n_jobs = 1
 rng = default_rng()
