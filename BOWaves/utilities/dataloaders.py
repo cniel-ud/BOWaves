@@ -288,11 +288,12 @@ def load_raw_set(args, rng, subj_ids):
     return X, y, expert_label_mask_ar, subj_ind, noisy_labels_ar, labels
 
 
-def load_raw_set_single_subj(args, rng, subj_ids, data_dir=Path('../data/cue'), fnames=None):
-    data_dir = Path(args.root, '/data/cue/')
+def load_raw_set_single_subj(args, rng, data_dir=Path('../data/cue'), fnames=None):
+    #data_dir = Path(args.root, '/data/cue/')
     # the above line does not work on Caviness. I don't know why.
     # therefore,
-    data_dir = Path('../data/cue')
+    #data_dir = Path('../data/cue')
+    #data_dir = Path('../data/codebooks/')
 
 
     #fnames = [f"subj-{i}.mat" for i in subj_ids] #modify to test on subset for smaller time
@@ -355,3 +356,93 @@ def load_raw_set_single_subj(args, rng, subj_ids, data_dir=Path('../data/cue'), 
             cum_ic_ind += 1
 
     return X, y, expert_label_mask_ar, subj_ind, noisy_labels_ar, labels
+
+def load_raw_set_single_subj_drb_frolich_extract(args, rng, data_dir=Path('../data/cue'), fnames=None):
+    """
+    So, I need the raw ICs to be in a specific shape for the BOWav feature extractor. Merely getting the raw ICs in a
+    2d matrix is not enough, must be 3d tensor. Appropriate function above to work with different data structs in the
+    saved mat file.
+    Parameters
+    ----------
+    args
+    rng
+    data_dir
+    fnames
+
+    Returns
+    -------
+
+    """
+    #data_dir = Path(args.root, '/data/cue/')
+    # the above line does not work on Caviness. I don't know why.
+    # therefore,
+    #data_dir = Path('../data/cue')
+    #data_dir = Path('../data/codebooks/')
+
+
+    #fnames = [f"subj-{i}.mat" for i in subj_ids] #modify to test on subset for smaller time
+
+    #temp fix, change to all subjects later
+    #fnames = fnames[0] #test a single subject for now
+    file_list = [data_dir.joinpath(f) for f in fnames]
+    # fnames = f'subj-{subj_id}.mat'
+    # file_list = [data_dir.joinpath(fnames)]
+
+    print("data_dir: ", data_dir)
+    print("file_list:\n\t", file_list)
+
+    n_ics_per_subj = []
+    for file in file_list:
+        with file.open('rb') as f:
+            matdict = loadmat(f, variable_names=['labels', 'srate'])
+            labels = matdict['labels']
+            #srate = matdict['srate']  # assumes all subjects have the same sampling rate
+            #srate = srate.item(0)  # `srate.shape=(1,1)`. This extracts the number.
+            n_ics_per_subj.append(labels.shape[0])
+
+    srate = 256
+
+    n_ics = np.sum(n_ics_per_subj)
+    minutes_per_window = (args.window_len / srate / 60)
+    n_win_per_ic = np.ceil(args.minutes_per_ic / minutes_per_window).astype(int)
+
+    # NOTE: float32. ICs were saved in matlab as single.
+    X = np.zeros((n_ics, n_win_per_ic, args.window_len), dtype=np.float32)
+    y = -1 * np.ones(n_ics, dtype=int)
+
+    cum_ic_ind = 0
+    expert_label_mask_ar = np.full(n_ics, False)
+    subj_ind = np.zeros(n_ics, dtype=int)
+    # 6 classes
+    #noisy_labels_ar = np.zeros((n_ics, 6), dtype=np.float32)
+    #for file, subjID in tqdm(zip(file_list, args.subj_ids)):
+    for file in tqdm(file_list):
+        with file.open('rb') as f:
+            matdict = loadmat(f)
+            data = matdict['X']
+            W = matdict['W']
+            # data = matdict['data']
+            # icaweights = matdict['icaweights']
+            # icasphere = matdict['icasphere']
+            #noisy_labels = matdict['noisy_labels']
+            #expert_label_mask = matdict['expert_label_mask']
+            # -1: Let class labels start at 0 in python
+            labels = matdict['labels'] - 1
+
+        #expert_label_mask = expert_label_mask.astype(bool)
+        icaact = W @ data #icaweights @ icasphere @ data
+
+        #expert_label_mask = expert_label_mask.astype(bool)
+        for ic_ind, ic in enumerate(icaact):
+            time_idx = np.arange(0, ic.size - args.window_len + 1, args.window_len)
+            time_idx = rng.choice(time_idx, size=n_win_per_ic, replace=False)
+            time_idx = time_idx[:, None] + np.arange(args.window_len)[None, :]
+            X[cum_ic_ind] = ic[time_idx]
+            y[cum_ic_ind] = labels[ic_ind]
+            #noisy_labels_ar[cum_ic_ind] = noisy_labels[ic_ind]
+            #expert_label_mask_ar[cum_ic_ind] = expert_label_mask[ic_ind]
+            #subj_ind[cum_ic_ind] = subjID
+            cum_ic_ind += 1
+
+    return X, y, labels
+    # return X, y, expert_label_mask_ar, subj_ind, noisy_labels_ar, labels
