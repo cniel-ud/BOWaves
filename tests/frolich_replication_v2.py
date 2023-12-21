@@ -91,7 +91,7 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
 
     window_len = 750
     metric, init = 'cosine', 'random'
-    num_clusters = 16
+    num_clusters = 128
     centroid_len = 500
     n_runs = 3
     n_jobs = 1
