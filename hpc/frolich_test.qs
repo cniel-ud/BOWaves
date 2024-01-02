@@ -4,7 +4,7 @@
 #SBATCH --job-name=cue_codebooks
 # SBATCH --partition=standard --gres=gpu
 # The below is maximum time for the job.
-#SBATCH --time=21-00:00:00
+#SBATCH --time=14-00:00:00
 #SBATCH --mail-user='ajmeek@udel.edu'
 # this could be --mail-type=END, FAIL, TIME_LIMIT_90. but I thought it was too many emails
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_90
