@@ -52,31 +52,38 @@ def read_lists_from_file(file_path):
 
 for file in files:
     y_pred, labels = read_lists_from_file(file)
-    print(y_pred)
-    print(labels)
+    print("predicted: ", y_pred)
+    print("true labels: ", labels)
 
     # BoWav confusion matrix on expert data
     disp_labels_x = ['brain', 'muscle', 'eye', 'Heart',
                      'Line Noise', 'Channel Noise', 'Other']
     disp_labels_y = ['brain', 'muscle', 'eye']
 
+    # cm = confusion_matrix(
+    #     y_pred,
+    #     labels,
+    #     labels=np.arange(7),
+    #     normalize='true'
+    # )
+    # cm = cm[:3]
     cm = confusion_matrix(
-        y_pred,
         labels,
+        y_pred,
         labels=np.arange(7),
         normalize='true'
     )
-    cm = cm[:3]
+    #cm = cm[:3]
     fig, ax = plot_confusion_matrix(
         cm,
         cmap='viridis',
         title=file[:2],
-        display_labels=[disp_labels_x, disp_labels_y],
+        #display_labels=[disp_labels_x, disp_labels_y],
         xticks_rotation='vertical'
     )
 
     #show plot
-    #plt.show()
+    plt.show()
 
     # save plot with appropriate filename per subj
-    plt.savefig(file[:-4] + '.jpg')
+    # plt.savefig(file[:-4] + '.jpg')

@@ -38,7 +38,7 @@ Visualize
 Do other things like calculate score
 """
 
-from BOWaves.utilities.dataloaders import load_codebooks, load_raw_set
+from BOWaves.utilities.dataloaders import load_codebooks, load_raw_set, load_raw_set_single_subj_drb_frolich_extract
 from BOWaves.bowav.bowav_feature_extractor import bag_of_waves
 # from BOWaves.utilities.visualizations import plot_confusion_matrix
 
@@ -105,8 +105,15 @@ best_params = copy.deepcopy(results["params"][best_index])
 subj_ids = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
 
 for subj_id in subj_ids:
-    raw_ics, y, expert_label_mask, \
-        subj_ind, noisy_labels, labels = load_raw_set(args, rng, subj_ids)
+
+    """
+    I did this several months ago, re update to work with the labels from Dr.B's processed frolich data.
+    """
+
+
+    # raw_ics, y, expert_label_mask, \
+    #     subj_ind, noisy_labels, labels = load_raw_set(args, rng, subj_ids)
+    raw_ics, y, labels = load_raw_set_single_subj_drb_frolich_extract(args, rng, data_dir=Path('../data/frolich'), fnames=[f'frolich_extract_{subj_id}.mat'])
     codebook_args = copy.deepcopy(args)
     codebook_args.minutes_per_ic = args.codebook_minutes_per_ic
     codebook_args.ics_per_subject = args.codebook_ics_per_subject
