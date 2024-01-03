@@ -117,7 +117,13 @@ for subj_id in subj_ids:
 
     # raw_ics, y, expert_label_mask, \
     #     subj_ind, noisy_labels, labels = load_raw_set(args, rng, subj_ids)
-    raw_ics, y, labels = load_raw_set_single_subj_drb_frolich_extract(args, rng, data_dir=Path('../data/frolich'), fnames=[f'frolich_extract_{subj_id}.mat'])
+    # raw_ics, y, labels = load_raw_set_single_subj_drb_frolich_extract(args, rng, data_dir=Path('../data/frolich'), fnames=[f'frolich_extract_{subj_id}.mat'])
+
+    # changed above. we want cue and emotion to be on same sampling rate, so use the resampled frolich data
+    raw_ics, y, labels = load_raw_set_single_subj_drb_frolich_extract(args, rng,
+                                                                      data_dir=Path('../data/cue/cue_signals_resampled_to_emotion'),
+                                                                      fnames=[f'frolich_extract_{subj_id}_resampled_to_mice.mat'])
+
     codebook_args = copy.deepcopy(args)
     codebook_args.minutes_per_ic = args.codebook_minutes_per_ic
     codebook_args.ics_per_subject = args.codebook_ics_per_subject
