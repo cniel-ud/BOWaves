@@ -108,6 +108,10 @@ for subj_id in subj_ids:
 
     """
     I did this several months ago, re update to work with the labels from Dr.B's processed frolich data.
+    
+    load_raw_set uses the cue dataset as found in ../data/cue/subj-XX.mat. These seem to have diff labels
+    than the ones processed by dr. b, which have 6 labels, unlike 7 there. Not sure what's what, but
+    will roll with Dr. B's processed version for now.
     """
 
 
