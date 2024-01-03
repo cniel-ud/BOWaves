@@ -85,7 +85,38 @@ for file in files:
     )
 
     #show plot
-    plt.show()
+    #plt.show()
 
     # save plot with appropriate filename per subj
-    # plt.savefig(file[:-4] + '.jpg')
+    plt.savefig(file[:-4] + '.jpg')
+
+
+# make one combined conf mat
+combined_y_pred = []
+combined_labels = []
+for file in files:
+    y_pred, labels = read_lists_from_file(file)
+    combined_y_pred += y_pred
+    combined_labels += labels
+
+# BoWav confusion matrix on expert data
+disp_labels_x = ['brain', 'muscle', 'eye', 'Heart',
+                 'Line Noise', 'Channel Noise', 'Other']
+disp_labels_y = ['blink', 'neural', 'heart', 'lat eye', 'muscle', 'mixed']
+
+cm = confusion_matrix(
+    combined_labels,
+    combined_y_pred,
+    labels=np.arange(7),
+    normalize='true'
+)
+cm = cm[:6]
+fig, ax = plot_confusion_matrix(
+    cm,
+    cmap='viridis',
+    title='Combined',
+    display_labels=[disp_labels_x, disp_labels_y],
+    xticks_rotation='vertical'
+)
+
+plt.savefig('combined_conf_mat.jpg')

@@ -86,22 +86,7 @@ best_index = results["rank_test_scores"].argmin()
 best_score = results[f"mean_test_scores"][best_index]
 best_params = copy.deepcopy(results["params"][best_index])
 
-# uncomment after adjusting to get labels, since cue data has labels incl we don't need noisy or expert masks
-# fname = (
-#     f'test_data_k-{args.num_clusters}_P-{args.centroid_len}'
-#     f'_winlen-{args.window_len}_minPerIC-{args.minutes_per_ic}'
-#     f'_cbookMinPerIc-{args.codebook_minutes_per_ic}'
-#     f'_cbookICsPerSubj-{args.codebook_ics_per_subject}.npz'
-# )
-# data_file = Path(args.root, 'data/cue', fname)
-# if data_file.is_file():
-#     with np.load(data_file) as data:
-#         X = data['X']
-#         y = data['y']
-#         noisy_labels = data['noisy_labels']
-#         expert_label_mask = data['expert_label_mask']
-#         subj_ind = data['subj_ind']
-# else:
+
 subj_ids = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
 
 for subj_id in subj_ids:
