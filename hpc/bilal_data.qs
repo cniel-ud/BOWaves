@@ -9,6 +9,7 @@
 #SBATCH --mail-type=END,FAIL,TIME_LIMIT_90
 #SBATCH --export=NONE
 #SBATCH --mem=64G
+#SBATCH --array=1-12
 #export UD_JOB_EXIT_FN_SIGNALS="SIGTERM EXIT"
 
 vpkg_devrequire intel-python/2022u1:python3
@@ -17,4 +18,4 @@ pip install seaborn
 
 # Run bash / python script below
 
-python ../tests/data_for_bilal.py
+python ../tests/data_for_bilal.py --codebook_subj=${SLURM_ARRAY_TASK_ID}
