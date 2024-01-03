@@ -140,7 +140,7 @@ class args:
     root = '../data/codebooks/frolich'
     num_clusters = 128
     window_len = 384
-    minutes_per_ic = 1.5
+    minutes_per_ic = 15 # this is where the bug was. set minutes per ic to 1.5, not 15. we take for 15 minutes, not 1.5. 60 now is 600.
     ics_per_subject = 100
     num_classes = 6
     centroid_len = 256
@@ -157,14 +157,7 @@ with np.load(codebook_file_path) as data:
 
 rng = default_rng()
 
-# raw_ics, y, expert_label_mask, \
-#     subj_ind, noisy_labels, labels = load_raw_set_single_subj(args, rng, Path('../data/codebooks/frolich'), fnames=['frolich_extract_subj_01_resampled_to_mice.mat'])
-
-# frolich_resampled_to_mice = loadmat('../data/codebooks/frolich/frolich_extract_subj_01_resampled_to_mice.mat')
-#
-# W = frolich_resampled_to_mice['W']
-# X = frolich_resampled_to_mice['X']
-# raw_ics = np.matmul(W, X)
+# think I messed up the codebook loading. It's making all the counts = 60.
 
 # raw_ics, labels = dataloaders.load_and_visualize_mat_file_frolich('../data/codebooks/frolich/frolich_extract_subj_01_resampled_to_mice.mat', visualize=False)
 raw_ics, y, labels = dataloaders.load_raw_set_single_subj_drb_frolich_extract(args, args.rng, data_dir=Path('../data/codebooks/frolich'), fnames=['frolich_extract_subj_01_resampled_to_mice.mat'])
