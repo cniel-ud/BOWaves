@@ -268,33 +268,39 @@ class args:
     rng = default_rng()
 #codebooks = load_codebooks(args)
 
-codebook_file_path = '../data/codebooks/frolich/sikmeans_P-384_k-128_class-neural_subj-1_resampled.npz'
-n_codebooks = 1
-codebooks = np.zeros((n_codebooks, args.num_clusters,
-                        args.centroid_len), dtype=np.float32)
-with np.load(codebook_file_path) as data:
-    codebooks[0] = data['centroids']
+for subj in subj_list:
+    #codebook_file_path = f'../data/codebooks/frolich/individual_neural_only_codebooks_bilal/sikmeans_P-384_k-128_class-neural_subj-{subj}_resampled.npz'
 
-rng = default_rng()
+    # now try emotion neural codebook
+    codebook_file_path = f'../data/codebooks/emotion/sikmeans_P-256_k-128_class-1_minutesPerIC-50.0_icsPerSubj-2.npz'
 
-# for reference with labels:
-# 'blink', 'neural', 'heart', 'lat eye', 'muscle', 'mixed' corresponds to 0-5
+    n_codebooks = 1
+    codebooks = np.zeros((n_codebooks, args.num_clusters,
+                            args.centroid_len), dtype=np.float32)
+    with np.load(codebook_file_path) as data:
+        codebooks[0] = data['centroids']
 
-# raw_ics, labels = dataloaders.load_and_visualize_mat_file_frolich('../data/codebooks/frolich/frolich_extract_subj_01_resampled_to_mice.mat', visualize=False)
-raw_ics, y, labels = dataloaders.load_raw_set_single_subj_drb_frolich_extract(args, args.rng, data_dir=Path('../data/codebooks/frolich'), fnames=['frolich_extract_subj_01_resampled_to_mice.mat'])
+    rng = default_rng()
 
-# boolean mask to get only ics which have label = [1] - neural
-mask = np.isin(labels, 1)
-mask = np.squeeze(mask)
+    # for reference with labels:
+    # 'blink', 'neural', 'heart', 'lat eye', 'muscle', 'mixed' corresponds to 0-5
 
-neural_only_ics = raw_ics[mask]
+    # raw_ics, labels = dataloaders.load_and_visualize_mat_file_frolich('../data/codebooks/frolich/frolich_extract_subj_01_resampled_to_mice.mat', visualize=False)
+    raw_ics, y, labels = dataloaders.load_raw_set_single_subj_drb_frolich_extract(args, args.rng, data_dir=Path('../data/codebooks/frolich'), fnames=[f'frolich_extract_subj_{subj}_resampled_to_mice.mat'])
 
-X = bag_of_waves(neural_only_ics, codebooks)
+    # boolean mask to get only ics which have label = [1] - neural
+    mask = np.isin(labels, 1)
+    mask = np.squeeze(mask)
 
-# save BOWav count vector to a file
-# np.savez('../data/codebooks/frolich/bowav_count_vector_subj-01.npz', X=X, y=y, expert_label_mask=expert_label_mask,
-#          subj_ind=subj_ind, noisy_labels=noisy_labels, labels=labels)
-np.savez('../data/codebooks/frolich/bowav_count_vector_subj-01_neural_only.npz', X=X, labels=labels)
+    neural_only_ics = raw_ics[mask]
+
+    X = bag_of_waves(neural_only_ics, codebooks)
+
+    # save BOWav count vector to a file
+    # np.savez('../data/codebooks/frolich/bowav_count_vector_subj-01.npz', X=X, y=y, expert_label_mask=expert_label_mask,
+    #          subj_ind=subj_ind, noisy_labels=noisy_labels, labels=labels)
+    #np.savez(f'../data/codebooks/frolich/individual_neural_only_codebooks_bilal/bowav_count_vector_subj-{subj}_neural_only.npz', X=X, labels=labels)
+    np.savez(f'../data/codebooks/emotion/bilal_bowav_count_vector_subj-{subj}_neural_only.npz', X=X, labels=labels)
 
 # ----------------------------------------------------------------------------------------------
 # Here I get the codebooks out of the mice dataset. There are six types of mice, of which half are WT - wild type.
