@@ -27,6 +27,7 @@ from numpy.random import default_rng
 import numpy as np
 from pathlib import Path
 from scipy.io import loadmat
+from scipy.signal import butter, sosfilt
 
 # changed to resample all cue subjects to the mice / emotion rates - 256 hz
 
@@ -44,10 +45,19 @@ subj_list = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '
 #
 #     matdict['X'] = scipy.signal.resample(matdict['X'], int((256.0/500) * data_len), axis=1) # should be 256/ 500.
 #
+#     # now do a lowpass 1 hz filter to match the emotion dataset preprocessing
+#     cutoff_frequency = 1  # Cutoff frequency in Hz
+#     order = 4  # Filter order
+#     sos = butter(order, cutoff_frequency, btype='low', fs=256, output='sos') #fs = sampling rate
+#
+#     # Apply the filter to the signal
+#     matdict['X'] = sosfilt(sos, matdict['X'])
+#
 #     print(subj, data_len, len(matdict['X'][1]))
 #
 #     # save matdict to new file
-#     scipy.io.savemat(f'../data/codebooks/frolich/frolich_extract_subj_{subj}_resampled_to_mice.mat', matdict)
+#     #scipy.io.savemat(f'../data/codebooks/frolich/frolich_extract_subj_{subj}_resampled_to_mice.mat', matdict)
+#     scipy.io.savemat(f'../data/codebooks/frolich/frolich_extract_subj_{subj}_resampled_to_mice_lp_filtered.mat', matdict)
 
 
 
@@ -286,7 +296,7 @@ for subj in subj_list:
     # 'blink', 'neural', 'heart', 'lat eye', 'muscle', 'mixed' corresponds to 0-5
 
     # raw_ics, labels = dataloaders.load_and_visualize_mat_file_frolich('../data/codebooks/frolich/frolich_extract_subj_01_resampled_to_mice.mat', visualize=False)
-    raw_ics, y, labels = dataloaders.load_raw_set_single_subj_drb_frolich_extract(args, args.rng, data_dir=Path('../data/codebooks/frolich'), fnames=[f'frolich_extract_subj_{subj}_resampled_to_mice.mat'])
+    raw_ics, y, labels = dataloaders.load_raw_set_single_subj_drb_frolich_extract(args, args.rng, data_dir=Path('../data/codebooks/frolich'), fnames=[f'frolich_extract_subj_{subj}_resampled_to_mice_lp_filtered.mat'])
 
     # boolean mask to get only ics which have label = [1] - neural
     mask = np.isin(labels, 1)
@@ -300,7 +310,7 @@ for subj in subj_list:
     # np.savez('../data/codebooks/frolich/bowav_count_vector_subj-01.npz', X=X, y=y, expert_label_mask=expert_label_mask,
     #          subj_ind=subj_ind, noisy_labels=noisy_labels, labels=labels)
     #np.savez(f'../data/codebooks/frolich/individual_neural_only_codebooks_bilal/bowav_count_vector_subj-{subj}_neural_only.npz', X=X, labels=labels)
-    np.savez(f'../data/codebooks/emotion/bilal_bowav_count_vector_subj-{subj}_neural_only.npz', X=X, labels=labels)
+    np.savez(f'../data/codebooks/emotion/bilal_bowav_count_vector_subj-{subj}_neural_only_lp_filtered.npz', X=X, labels=labels)
 
 # ----------------------------------------------------------------------------------------------
 # Here I get the codebooks out of the mice dataset. There are six types of mice, of which half are WT - wild type.
