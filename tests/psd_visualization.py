@@ -26,18 +26,18 @@ num_signals = 12
 for i in range(num_signals):
     # Load data
     if i < 9:
-        title = f'frolich_extract_subj_0{i+1}_resampled_to_mice_lp_filtered.mat'
+        title = f'frolich_extract_subj_0{i+1}_500_hz_lp_filtered.mat'#_500_hz_hp_filtered.mat'
     else:
-        title = f'frolich_extract_subj_{i+1}_resampled_to_mice_lp_filtered.mat'
+        title = f'frolich_extract_subj_{i+1}_500_hz_lp_filtered.mat'#_500_hz_hp_filtered.mat'
     #title = f'frolich_extract_subj_{i+1}_resampled_to_mice_hp_filtered.mat'
-    frolich_resampled = loadmat(f'../data/codebooks/frolich/{title}')
+    cue = loadmat(f'../data/codebooks/frolich/{title}')
 
     #pxx, freqs = plt.psd(frolich_resampled['X'], Fs=256)
-    pxx, freqs = axs[i].psd(frolich_resampled['X'], Fs=256)
+    pxx, freqs = axs[i].psd(cue['X'], Fs=500)
     axs[i].set_title(f'Subject {i + 1}')
 
 # Add a title to the entire figure
-fig.suptitle('PSD of Frolich Resampled EEG Data Low Pass Filtered (should be noise)', fontsize=16)
+fig.suptitle('PSD of Cue 500 hz EEG Data 1 hz Low Pass Filtered', fontsize=16)
 
 # Adjust layout to prevent overlapping
 plt.tight_layout(rect=[0, 0, 1, 0.96])
@@ -47,7 +47,7 @@ plt.tight_layout(rect=[0, 0, 1, 0.96])
 #plt.title(title)
 
 #plt.show()
-plt.savefig('../data/codebooks/frolich/frolich_resampled_psd_lp_filtered.png')
+plt.savefig('../data/codebooks/frolich/frolich_500_hz_psd_no_filtering.png')
 
 # arrange these later to be in a 3x4 grid etc
 

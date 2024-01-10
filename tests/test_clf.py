@@ -106,8 +106,9 @@ for subj_id in subj_ids:
 
     # changed above. we want cue and emotion to be on same sampling rate, so use the resampled frolich data
     raw_ics, y, labels = load_raw_set_single_subj_drb_frolich_extract(args, rng,
-                                                                      data_dir=Path('../data/cue/cue_signals_resampled_to_emotion'),
-                                                                      fnames=[f'frolich_extract_subj_{subj_id}_resampled_to_mice.mat'])
+                                                                      #data_dir=Path('../data/cue/cue_signals_resampled_to_emotion'),
+                                                                      data_dir=Path('../data/frolich'),
+                                                                      fnames=[f'frolich_extract_subj_{subj_id}_500_hz_hp_filtered.mat'])
 
     codebook_args = copy.deepcopy(args)
     codebook_args.minutes_per_ic = args.codebook_minutes_per_ic
@@ -127,7 +128,7 @@ for subj_id in subj_ids:
     print("labels: \n\t", labels)
 
     # save the y_pred and labels to a separate text file
-    with open(f'../data/cue/{subj_id}_pred_and_labels_hp_filtered.txt', 'w') as f:
+    with open(f'../data/cue/{subj_id}_pred_and_labels_1_hz_hp_filtered_500_hz.txt', 'w') as f:
         f.write(f'y_pred: \n\t{y_pred}\n')
         f.write(f'labels: \n\t{labels}\n')
         # for i in range(len(labels)):

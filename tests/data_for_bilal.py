@@ -43,12 +43,12 @@ for subj in subj_list:
     # matdict['X'] = scipy.signal.resample(matdict['X'], int((500.0/256) * data_len), axis=1) # should be 256/ 500.
     # to double check, length of resampled divided by 256 should be equal to length of original divided by 500.
 
-    matdict['X'] = scipy.signal.resample(matdict['X'], int((256.0/500) * data_len), axis=1) # should be 256/ 500.
+    #matdict['X'] = scipy.signal.resample(matdict['X'], int((256.0/500) * data_len), axis=1) # should be 256/ 500.
 
     # now do a lowpass 1 hz filter to match the emotion dataset preprocessing
     cutoff_frequency = 1  # Cutoff frequency in Hz
     order = 4  # Filter order
-    sos = butter(order, cutoff_frequency, btype='high', fs=256, output='sos') #fs = sampling rate
+    sos = butter(order, cutoff_frequency, btype='low', fs=500, output='sos') #fs = sampling rate
 
     # Apply the filter to the signal
     matdict['X'] = sosfilt(sos, matdict['X'])
@@ -57,7 +57,7 @@ for subj in subj_list:
 
     # save matdict to new file
     #scipy.io.savemat(f'../data/codebooks/frolich/frolich_extract_subj_{subj}_resampled_to_mice.mat', matdict)
-    scipy.io.savemat(f'../data/codebooks/frolich/frolich_extract_subj_{subj}_resampled_to_mice_hp_filtered.mat', matdict)
+    scipy.io.savemat(f'../data/codebooks/frolich/frolich_extract_subj_{subj}_500_hz_lp_filtered.mat', matdict)
 
 
 
@@ -266,51 +266,51 @@ for subj in subj_list:
 # ----------------------------------------------------------------------------------------------
 
 #now load codebook and calculate the BOWav count vector from it
-class args:
-    root = '../data/codebooks/frolich'
-    num_clusters = 128
-    window_len = 384
-    minutes_per_ic = 15 # this is where the bug was. set minutes per ic to 1.5, not 15. we take for 15 minutes, not 1.5. 60 now is 600.
-    ics_per_subject = 100
-    num_classes = 6
-    centroid_len = 256
-    n_jobs = 1
-    rng = default_rng()
-#codebooks = load_codebooks(args)
-
-for subj in subj_list:
-    #codebook_file_path = f'../data/codebooks/frolich/individual_neural_only_codebooks_bilal/sikmeans_P-384_k-128_class-neural_subj-{subj}_resampled.npz'
-
-    # now try emotion neural codebook
-    codebook_file_path = f'../data/codebooks/emotion/sikmeans_P-256_k-128_class-1_minutesPerIC-50.0_icsPerSubj-2.npz'
-
-    n_codebooks = 1
-    codebooks = np.zeros((n_codebooks, args.num_clusters,
-                            args.centroid_len), dtype=np.float32)
-    with np.load(codebook_file_path) as data:
-        codebooks[0] = data['centroids']
-
-    rng = default_rng()
-
-    # for reference with labels:
-    # 'blink', 'neural', 'heart', 'lat eye', 'muscle', 'mixed' corresponds to 0-5
-
-    # raw_ics, labels = dataloaders.load_and_visualize_mat_file_frolich('../data/codebooks/frolich/frolich_extract_subj_01_resampled_to_mice.mat', visualize=False)
-    raw_ics, y, labels = dataloaders.load_raw_set_single_subj_drb_frolich_extract(args, args.rng, data_dir=Path('../data/codebooks/frolich'), fnames=[f'frolich_extract_subj_{subj}_resampled_to_mice_hp_filtered.mat'])
-
-    # boolean mask to get only ics which have label = [1] - neural
-    mask = np.isin(labels, 1)
-    mask = np.squeeze(mask)
-
-    neural_only_ics = raw_ics[mask]
-
-    X = bag_of_waves(neural_only_ics, codebooks)
-
-    # save BOWav count vector to a file
-    # np.savez('../data/codebooks/frolich/bowav_count_vector_subj-01.npz', X=X, y=y, expert_label_mask=expert_label_mask,
-    #          subj_ind=subj_ind, noisy_labels=noisy_labels, labels=labels)
-    #np.savez(f'../data/codebooks/frolich/individual_neural_only_codebooks_bilal/bowav_count_vector_subj-{subj}_neural_only.npz', X=X, labels=labels)
-    np.savez(f'../data/codebooks/emotion/bilal_bowav_count_vector_subj-{subj}_neural_only_hp_filtered.npz', X=X, labels=labels)
+# class args:
+#     root = '../data/codebooks/frolich'
+#     num_clusters = 128
+#     window_len = 384
+#     minutes_per_ic = 15 # this is where the bug was. set minutes per ic to 1.5, not 15. we take for 15 minutes, not 1.5. 60 now is 600.
+#     ics_per_subject = 100
+#     num_classes = 6
+#     centroid_len = 256
+#     n_jobs = 1
+#     rng = default_rng()
+# #codebooks = load_codebooks(args)
+#
+# for subj in subj_list:
+#     #codebook_file_path = f'../data/codebooks/frolich/individual_neural_only_codebooks_bilal/sikmeans_P-384_k-128_class-neural_subj-{subj}_resampled.npz'
+#
+#     # now try emotion neural codebook
+#     codebook_file_path = f'../data/codebooks/emotion/sikmeans_P-256_k-128_class-1_minutesPerIC-50.0_icsPerSubj-2.npz'
+#
+#     n_codebooks = 1
+#     codebooks = np.zeros((n_codebooks, args.num_clusters,
+#                             args.centroid_len), dtype=np.float32)
+#     with np.load(codebook_file_path) as data:
+#         codebooks[0] = data['centroids']
+#
+#     rng = default_rng()
+#
+#     # for reference with labels:
+#     # 'blink', 'neural', 'heart', 'lat eye', 'muscle', 'mixed' corresponds to 0-5
+#
+#     # raw_ics, labels = dataloaders.load_and_visualize_mat_file_frolich('../data/codebooks/frolich/frolich_extract_subj_01_resampled_to_mice.mat', visualize=False)
+#     raw_ics, y, labels = dataloaders.load_raw_set_single_subj_drb_frolich_extract(args, args.rng, data_dir=Path('../data/codebooks/frolich'), fnames=[f'frolich_extract_subj_{subj}_resampled_to_mice_hp_filtered.mat'])
+#
+#     # boolean mask to get only ics which have label = [1] - neural
+#     mask = np.isin(labels, 1)
+#     mask = np.squeeze(mask)
+#
+#     neural_only_ics = raw_ics[mask]
+#
+#     X = bag_of_waves(neural_only_ics, codebooks)
+#
+#     # save BOWav count vector to a file
+#     # np.savez('../data/codebooks/frolich/bowav_count_vector_subj-01.npz', X=X, y=y, expert_label_mask=expert_label_mask,
+#     #          subj_ind=subj_ind, noisy_labels=noisy_labels, labels=labels)
+#     #np.savez(f'../data/codebooks/frolich/individual_neural_only_codebooks_bilal/bowav_count_vector_subj-{subj}_neural_only.npz', X=X, labels=labels)
+#     np.savez(f'../data/codebooks/emotion/bilal_bowav_count_vector_subj-{subj}_neural_only_hp_filtered.npz', X=X, labels=labels)
 
 # ----------------------------------------------------------------------------------------------
 # Here I get the codebooks out of the mice dataset. There are six types of mice, of which half are WT - wild type.
