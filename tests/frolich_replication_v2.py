@@ -234,7 +234,8 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
     for label in windows_per_class:
         if len(windows_per_class[label]) > windows_to_select:
             selected_indices = random.sample(range(len(windows_per_class[label])), windows_to_select)
-            windows_per_class[label] = [windows_per_class[label][i] for i in selected_indices]
+            #windows_per_class[label] = [windows_per_class[label][i] for i in selected_indices] # - turning into list. maintain ndarray
+            windows_per_class[label] = np.array(windows_per_class[label])[selected_indices]
 
     # error - I think the above is messing with this because it's turning ndarrays into lists.
     # debug tmrw.
@@ -329,7 +330,9 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
     for label in windows_per_class:
         if len(windows_per_class[label]) > windows_to_select:
             selected_indices = random.sample(range(len(windows_per_class[label])), windows_to_select)
-            windows_per_class[label] = [windows_per_class[label][i] for i in selected_indices]
+            # windows_per_class[label] = [windows_per_class[label][i] for i in selected_indices]
+            windows_per_class[label] = np.array(windows_per_class[label])[selected_indices]
+
 
     #error checking of type in windows per class
     print("after training codebooks")
