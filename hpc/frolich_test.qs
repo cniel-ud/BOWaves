@@ -1,7 +1,7 @@
 #!/bin/bash -l
 # SBATCH --ntasks=1
 #SBATCH --nodes=1
-#SBATCH --job-name=cue_codebooks
+#SBATCH --job-name=loo_cue_codebooks
 # SBATCH --partition=standard --gres=gpu
 # The below is maximum time for the job.
 #SBATCH --time=7-00:00:00

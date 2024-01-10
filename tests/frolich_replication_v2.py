@@ -13,6 +13,7 @@ from sklearn.metrics import confusion_matrix
 import seaborn as sns
 import re
 import argparse
+import random
 
 pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
 
@@ -225,14 +226,18 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
 
     path = pyrootutils.find_root(search_from=__file__, indicator=".git")
 
-    #now calculate sikmeans on the above windows per class.
+    # change as of 9/1/24. Want to not use all windows per class. Taking too long. Do a random subset of 100k.
 
-    # metric, init = 'cosine', 'random'
-    # num_clusters = 16
-    # centroid_len = 256
-    # n_runs = 3
-    # n_jobs = 1
-    # rng = 42
+    random.seed(42) # for reproducibility
+    windows_to_select = 100000
+
+    for label in windows_per_class:
+        if len(windows_per_class[label]) > windows_to_select:
+            selected_indices = random.sample(range(len(windows_per_class[label])), windows_to_select)
+            windows_per_class[label] = [windows_per_class[label][i] for i in selected_indices]
+
+
+    #now calculate sikmeans on the above windows per class.
 
     #error checking of type in windows per class
     print("after training codebooks")
@@ -319,12 +324,10 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
 
     path = pyrootutils.find_root(search_from=__file__, indicator=".git")
 
-    # metric, init = 'cosine', 'random'
-    # num_clusters = 16
-    # centroid_len = 256
-    # n_runs = 3
-    # n_jobs = 1
-    # rng = 42#np.random.RandomState(42)
+    for label in windows_per_class:
+        if len(windows_per_class[label]) > windows_to_select:
+            selected_indices = random.sample(range(len(windows_per_class[label])), windows_to_select)
+            windows_per_class[label] = [windows_per_class[label][i] for i in selected_indices]
 
     #error checking of type in windows per class
     print("after training codebooks")

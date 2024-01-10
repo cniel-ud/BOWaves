@@ -47,7 +47,7 @@ plt.tight_layout(rect=[0, 0, 1, 0.96])
 #plt.title(title)
 
 #plt.show()
-plt.savefig('../data/codebooks/frolich/frolich_500_hz_psd_no_filtering.png')
+plt.savefig('../data/codebooks/frolich/frolich_500_hz_psd_lp_filtered.png')
 
 # arrange these later to be in a 3x4 grid etc
 
