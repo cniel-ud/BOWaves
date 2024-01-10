@@ -236,6 +236,8 @@ def train_and_store_codebooks(frolich_ICs_by_subj, loo_subj = None):
             selected_indices = random.sample(range(len(windows_per_class[label])), windows_to_select)
             windows_per_class[label] = [windows_per_class[label][i] for i in selected_indices]
 
+    # error - I think the above is messing with this because it's turning ndarrays into lists.
+    # debug tmrw.
 
     #now calculate sikmeans on the above windows per class.
 
