@@ -118,6 +118,10 @@ for file in file_list:
 for class_ in all_classes:
     # take 12 random samples from each class
     num_samples = 12
+
+    # set seed for reproducibility
+    np.random.seed(42)
+
     sample_indices = np.random.randint(0, len(class_['ICs']), num_samples)
 
     # get samples from ICs
@@ -137,4 +141,6 @@ for class_ in all_classes:
 
     # save
     plt.tight_layout(rect=[0, 0, 1, 0.96])
-    plt.savefig(f'../data/codebooks/frolich/{class_["name"]}_500_hz_psd_hp_filtered.png')
+    plt.savefig(f'./data/codebooks/frolich/{class_["name"]}_500_hz_psd_hp_filtered.png')
+
+plt.close('all')
