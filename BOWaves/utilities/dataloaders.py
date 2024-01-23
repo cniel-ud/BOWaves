@@ -304,8 +304,8 @@ def load_raw_set_single_subj(args, rng, data_dir=Path('../data/cue'), fnames=Non
     # fnames = f'subj-{subj_id}.mat'
     # file_list = [data_dir.joinpath(fnames)]
 
-    print("data_dir: ", data_dir)
-    print("file_list:\n\t", file_list)
+    # print("data_dir: ", data_dir)
+    # print("file_list:\n\t", file_list)
 
     n_ics_per_subj = []
     for file in file_list:
@@ -329,7 +329,8 @@ def load_raw_set_single_subj(args, rng, data_dir=Path('../data/cue'), fnames=Non
     subj_ind = np.zeros(n_ics, dtype=int)
     # 7 ICLabel classes
     noisy_labels_ar = np.zeros((n_ics, 7), dtype=np.float32)
-    for file, subjID in tqdm(zip(file_list, args.subj_ids)):
+    #for file, subjID in tqdm(zip(file_list, args.subj_ids)):
+    for file in file_list:
         with file.open('rb') as f:
             matdict = loadmat(f)
             data = matdict['data']
@@ -352,10 +353,10 @@ def load_raw_set_single_subj(args, rng, data_dir=Path('../data/cue'), fnames=Non
             y[cum_ic_ind] = labels[ic_ind]
             noisy_labels_ar[cum_ic_ind] = noisy_labels[ic_ind]
             expert_label_mask_ar[cum_ic_ind] = expert_label_mask[ic_ind]
-            subj_ind[cum_ic_ind] = subjID
+            #subj_ind[cum_ic_ind] = subjID
             cum_ic_ind += 1
 
-    return X, y, expert_label_mask_ar, subj_ind, noisy_labels_ar, labels
+    return X, y, expert_label_mask_ar, noisy_labels_ar, labels #, subj_ind
 
 def load_raw_set_single_subj_drb_frolich_extract(args, rng, data_dir=Path('../data/cue'), fnames=None):
     """
