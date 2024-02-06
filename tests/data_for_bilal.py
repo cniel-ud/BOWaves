@@ -9,6 +9,8 @@ This will also serve as an API guide for Bilal when he looks further into the co
 import pyrootutils
 import argparse
 
+from tqdm import tqdm
+
 # un comment for caviness
 # pyrootutils.set_root(path='/work/cniel/ajmeek/BOWaves/BOWaves', pythonpath=True)
 #
@@ -313,24 +315,66 @@ class args:
 #     np.savez(f'../data/codebooks/emotion/bilal_bowav_count_vector_subj-{subj}_neural_only_hp_filtered.npz', X=X, labels=labels)
 
 
-codebook_file_path = f'../data/codebooks/frolich/bilal_all_cue_neural_codebook_counts/sikmeans_P-384_k-128_class-neural_all_subj_resampled.npz'
+# codebook_file_path = f'../data/codebooks/frolich/bilal_all_cue_neural_codebook_counts/sikmeans_P-384_k-128_class-neural_all_subj_resampled.npz'
+# n_codebooks = 1
+# for subj in subj_list:
+#     codebooks = np.zeros((n_codebooks, args.num_clusters,
+#                             args.centroid_len), dtype=np.float32)
+#     with np.load(codebook_file_path) as data:
+#         codebooks[0] = data['centroids']
+#
+#     rng = default_rng()
+#
+#     # for reference with labels:
+#     # 'blink', 'neural', 'heart', 'lat eye', 'muscle', 'mixed' corresponds to 0-5
+#
+#     # raw_ics, labels = dataloaders.load_and_visualize_mat_file_frolich('../data/codebooks/frolich/frolich_extract_subj_01_resampled_to_mice.mat', visualize=False)
+#     raw_ics, y, labels = dataloaders.load_raw_set_single_subj_drb_frolich_extract(args, args.rng, data_dir=Path('../data/codebooks/frolich'), fnames=[f'frolich_extract_subj_{subj}_resampled_to_mice.mat'])
+#
+#     # boolean mask to get only ics which have label = [1] - neural
+#     mask = np.isin(labels, 1)
+#     mask = np.squeeze(mask)
+#
+#     neural_only_ics = raw_ics[mask]
+#
+#     X = bag_of_waves(neural_only_ics, codebooks)
+#
+#     # save BOWav count vector to a file
+#     # np.savez('../data/codebooks/frolich/bowav_count_vector_subj-01.npz', X=X, y=y, expert_label_mask=expert_label_mask,
+#     #          subj_ind=subj_ind, noisy_labels=noisy_labels, labels=labels)
+#     #np.savez(f'../data/codebooks/frolich/individual_neural_only_codebooks_bilal/bowav_count_vector_subj-{subj}_neural_only.npz', X=X, labels=labels)
+#     #np.savez(f'../data/codebooks/emotion/bilal_bowav_count_vector_subj-{subj}_neural_only_hp_filtered.npz', X=X, labels=labels)
+#     # note on above - if I want to do hp filtered counts again, I might need to retrain the codebooks.
+#
+#     np.savez(f'../data/codebooks/frolich/bilal_all_cue_neural_codebook_counts/bowav_count_vector_subj-{subj}_neural_only_resampled.npz', X=X, labels=labels)
+
+# ----------------------------------------------------------------------------------------------
+# Here I get the counts for the emotion dataset.
+#
+# all but 22, which is annoying
+subj_list = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10',
+             '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
+             '21', '23', '24', '25', '26', '27', '28', '29', '30', '31',
+             '32', '33', '34', '35']
+
+codebook_file_path = f'../data/ds003004/after_processing/emotion_counts/sikmeans_P-384_k-128_class-neural_all_subj_resampled.npz'
 n_codebooks = 1
-for subj in subj_list:
-    codebooks = np.zeros((n_codebooks, args.num_clusters,
-                            args.centroid_len), dtype=np.float32)
-    with np.load(codebook_file_path) as data:
-        codebooks[0] = data['centroids']
+codebooks = np.zeros((n_codebooks, args.num_clusters,
+                        args.centroid_len), dtype=np.float32)
+with np.load(codebook_file_path) as data:
+    codebooks[0] = data['centroids']
 
-    rng = default_rng()
 
-    # for reference with labels:
-    # 'blink', 'neural', 'heart', 'lat eye', 'muscle', 'mixed' corresponds to 0-5
 
-    # raw_ics, labels = dataloaders.load_and_visualize_mat_file_frolich('../data/codebooks/frolich/frolich_extract_subj_01_resampled_to_mice.mat', visualize=False)
-    raw_ics, y, labels = dataloaders.load_raw_set_single_subj_drb_frolich_extract(args, args.rng, data_dir=Path('../data/codebooks/frolich'), fnames=[f'frolich_extract_subj_{subj}_resampled_to_mice.mat'])
+for subj in tqdm(subj_list):
+    # load data and labels. again sort to only get neural ICs
 
-    # boolean mask to get only ics which have label = [1] - neural
-    mask = np.isin(labels, 1)
+    raw_ics, y, expert_label_mask, noisy_labels, labels =\
+        dataloaders.load_raw_set_single_subj(args, args.rng, data_dir=Path('../data/ds003004/after_processing'),
+                                                 fnames=[f'subj-{subj}.mat'])
+
+    # boolean mask to get only ics which have label = [0] - zero is neural for emotion. technically 'brain', not neural
+    mask = np.isin(labels, 0)
     mask = np.squeeze(mask)
 
     neural_only_ics = raw_ics[mask]
@@ -338,17 +382,4 @@ for subj in subj_list:
     X = bag_of_waves(neural_only_ics, codebooks)
 
     # save BOWav count vector to a file
-    # np.savez('../data/codebooks/frolich/bowav_count_vector_subj-01.npz', X=X, y=y, expert_label_mask=expert_label_mask,
-    #          subj_ind=subj_ind, noisy_labels=noisy_labels, labels=labels)
-    #np.savez(f'../data/codebooks/frolich/individual_neural_only_codebooks_bilal/bowav_count_vector_subj-{subj}_neural_only.npz', X=X, labels=labels)
-    #np.savez(f'../data/codebooks/emotion/bilal_bowav_count_vector_subj-{subj}_neural_only_hp_filtered.npz', X=X, labels=labels)
-    # note on above - if I want to do hp filtered counts again, I might need to retrain the codebooks.
-
-    np.savez(f'../data/codebooks/frolich/bilal_all_cue_neural_codebook_counts/bowav_count_vector_subj-{subj}_neural_only_resampled.npz', X=X, labels=labels)
-
-# ----------------------------------------------------------------------------------------------
-# Here I get the codebooks out of the mice dataset. There are six types of mice, of which half are WT - wild type.
-# meaning they are not genetically modified. Bilal, I'm currently getting you the codebooks and counts for the second one.
-# For your reference, this is BXD87 HET.
-
-# note - going to upload Isabel's stuff to the mice repo under cniel github first and get the codebook and counts there.
+    np.savez(f'../data/ds003004/after_processing/emotion_counts/bowav_count_vector_subj-{subj}.npz', X=X)
