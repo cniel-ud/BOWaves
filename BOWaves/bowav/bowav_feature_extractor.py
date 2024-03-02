@@ -37,7 +37,7 @@ def bag_of_waves(raw_ics, codebooks, metric='cosine', n_jobs=1):
         for r in np.arange(n_codebooks):
             nu, _, _ = _assignment_step(
                 raw_ics[i_ic], codebooks[r], metric,
-                x_squared_norms, n_jobs=n_jobs)
+                x_squared_norms)#, n_jobs=n_jobs)
             nu, counts = np.unique(nu, return_counts=True)
             # centroid index->feature index
             i_feature = nu + r * n_centroids
