@@ -34,13 +34,26 @@ def load_tensor(directory_path: str, file_list: List[str], srate: int, segment_l
     # Load the data from the files.
     data = [np.load(directory_path + file) for file in file_list]
 
-    # Extract the ICs from the data.
-    ics = [subject['icaact'] for subject in data]
+    window_length = srate * 30 # 30 second windows
+    n_signals = segment_length // window_length
+    tensor = np.ndarray(shape=(0, n_signals, window_length))
 
-    # Reshape the ICs to be of shape (n_ics, n_signals, time=30 seconds).
-    ics = [ic.reshape(-1, srate*30) for ic in ics]
+    for subject in data:
+        # Check that the data has the 'icaact' key.
+        if 'icaact' not in subject.keys():
+            raise ValueError("The data does not have the 'icaact' key.")
 
-    # Stack the ICs into a tensor.
-    tensor = np.stack(ics, axis=0)
+        ics, ic_length = subject['icaact'].shape
+
+        # reshape to (n_ics, n_signals, time=30 seconds)
+
+        # curtail the data to the correct length.
+        curtailed = subject['icaact'][:, :n_signals*window_length]
+
+        # make sure to test that this reshaping does it correctly.
+        reshaped_data = curtailed.reshape(ics, n_signals, window_length)
+
+        # concatenate the reshaped data to the tensor.
+        tensor = np.concatenate((tensor, reshaped_data), axis=0)
 
     return tensor
