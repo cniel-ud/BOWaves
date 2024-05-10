@@ -47,6 +47,19 @@ Note: This repo is adapted from https://github.com/chmendoza/sikcsp. If you find
   doi={10.1109/EMBC46164.2021.9629913}}
 ```
 
+Additionally, if you use the Convolutional Monge Mapping Normalization technique, then please refer to the author's paper on the arXiv here: https://arxiv.org/pdf/2305.18831.pdf
+
+Our integration of the technique into this package is also gratefully indebted to the author's implementation here: https://github.com/PythonOT/convolutional-monge-mapping-normalization/tree/main
+
+```bibtex
+@inproceedings{gnassounou2023convolutional,
+author = {Gnassounou, Théo and Flamary, Rémi and Gramfort, Alexandre},
+title = {Convolutional Monge Mapping Normalization for learning on biosignals},
+booktitle = {Neural Information Processing Systems (NeurIPS)},
+year = {2023}
+}
+```
+
 ## Further note
 
 If you clone the repo in the current state, you may notice many things are in the repo that are not in the package, such as matlab files.
