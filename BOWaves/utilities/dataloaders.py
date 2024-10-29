@@ -281,8 +281,10 @@ def load_raw_set(args, rng, subj_ids):
         with file.open('rb') as f:
             matdict = loadmat(f, variable_names=['labels', 'srate'])
             labels = matdict['labels']
-            srate = matdict['srate']  # assumes all subjects have the same sampling rate
-            srate = srate.item(0)  # `srate.shape=(1,1)`. This extracts the number.
+            # srate = matdict['srate']  # assumes all subjects have the same sampling rate
+            # srate = srate.item(0)  # `srate.shape=(1,1)`. This extracts the number.
+
+            srate = args.srate
             n_ics_per_subj.append(labels.shape[0])
 
     n_ics = np.sum(n_ics_per_subj)
@@ -351,8 +353,10 @@ def load_raw_set_single_subj(args, rng, data_dir=Path('../data/cue'), fnames=Non
         with file.open('rb') as f:
             matdict = loadmat(f, variable_names=['labels', 'srate'])
             labels = matdict['labels']
-            srate = matdict['srate']  # assumes all subjects have the same sampling rate
-            srate = srate.item(0)  # `srate.shape=(1,1)`. This extracts the number.
+            # srate = matdict['srate']  # assumes all subjects have the same sampling rate
+            # srate = srate.item(0)  # `srate.shape=(1,1)`. This extracts the number.
+
+            srate = args.srate
             n_ics_per_subj.append(labels.shape[0])
 
     n_ics = np.sum(n_ics_per_subj)
