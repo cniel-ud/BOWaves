@@ -544,7 +544,7 @@ def si_kmeans_single(X, n_clusters, centroid_length, metric='euclidean',\
         centroids = _centroids_update_step(
             X, centroid_length, n_clusters, labels, shifts)
 
-        inertia = distances.sum()
+        inertia = distances.mean()
 
         if verbose:
             print("Iteration %2d, inertia %.3f" % (iteration, inertia))
@@ -556,7 +556,7 @@ def si_kmeans_single(X, n_clusters, centroid_length, metric='euclidean',\
             best_distances = distances
             best_inertia = inertia
 
-        centroid_change = squared_norm(centroids_old - centroids)
+        centroid_change = squared_norm(centroids_old - centroids)/n_clusters/centroid_length
         #print(centroid_change, tol)
         if centroid_change <= tol:
             if verbose:
@@ -569,7 +569,7 @@ def si_kmeans_single(X, n_clusters, centroid_length, metric='euclidean',\
         # rerun asingment step in case of non-convergence so that predicted
         # labels match cluster centers
         best_labels, best_shifts, distances = _assignment_step(X, best_centroids, metric, x_squared_norms)
-        best_inertia = distances.sum()
+        best_inertia = distances.mean()
 
     return best_centroids, best_labels, best_shifts, best_distances, best_inertia, iteration+1
 

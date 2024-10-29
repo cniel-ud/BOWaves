@@ -8,7 +8,6 @@ from sklearn.metrics.pairwise import euclidean_distances
 from sklearn.metrics.pairwise import pairwise_distances_argmin_min
 from sklearn.utils.extmath import row_norms
 from sklearn.preprocessing import normalize
-
 from scipy.cluster.vq import vq
 
 
@@ -184,7 +183,7 @@ def si_pairwise_distances_argmin_min_toeplitz(X, centroids, metric, x_squared_no
 
     return best_labels, best_shifts, best_distances
 
-def si_pairwise_distances_argmin_min_scipyvq(X, centroids, metric, x_squared_norms):
+def si_pairwise_distances_argmin_min_scipyvq(X, centroids, metric):
     """
     Shift-invariant wrapper of argmin_min, but using scipy's vq instead.
     Ablation based on 3rd comment of: https://stackoverflow.com/questions/21660937/get-nearest-point-to-centroid-scikit-learn
@@ -203,7 +202,7 @@ def si_pairwise_distances_argmin_min_scipyvq(X, centroids, metric, x_squared_nor
     """
 
     # TODO - make sure to reproduce with set random seed
-
+    print('Hello from scipy')
     # euclidean_distances() requires 2D
 
     #first if-else commented out for testing
@@ -224,32 +223,12 @@ def si_pairwise_distances_argmin_min_scipyvq(X, centroids, metric, x_squared_nor
             # A bug on sklearn enforces a 2D array
             #XX = x_squared_norms[shift].reshape((n_samples, 1))
             best_labels[shift], best_distances[shift] = \
-                vq(X[:, shift:shift+centroid_length], centroids)
+                vq(X[:, shift:shift+centroid_length], centroids,check_finite=False)
     elif metric == 'cosine':
-        # if metric is cosine, just pass in the normalized waves. That'll make it spherical / amplitude invariant
+        # if metric is cosine, just pass in the normalized centroids
+        normalized_centroids = normalize(centroids, axis=1)
         for shift in range(n_shifts):
-            # Preprocessing
-            # Step 1: Normalize the vectors
-            normalized_X = normalize(X[:, shift:shift + centroid_length], axis=1)
-
-            # TODO - need to normalize the centroids as well
-            normalized_centroids = normalize(centroids, axis=1)
-
-            # question for Dr. B - do we need to normalize the centroids here? I don't think so
-            # Step 2: Calculate cosine similarity
-            #cosine_sim = normalized_X @ centroids.T
-
-            # Step 3: Convert cosine similarity to cosine distance
-            #cosine_dist = 1 - cosine_sim
-
-            # Reshape centroids matrix
-            #reshaped_centroids = np.reshape(centroids, (1, -1))
-
-            #print(shape(cosine_dist))
-            #print(reshaped_centroids.shape())
-
-            best_labels[shift], best_distances[shift] = \
-                vq(normalized_X, normalized_centroids)
+            best_labels[shift], best_distances[shift] = vq(X[:, shift:shift + centroid_length], normalized_centroids, check_finite=False)
     else:
         sys.exit('%s metric not implemented' % metric)
 
